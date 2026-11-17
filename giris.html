@@ -1,0 +1,1063 @@
+
+Warning: Undefined array key "REQUEST_METHOD" in C:\xampp\htdocs\gumruk\wp-content\themes\gumrukmusavirligi\page-giris.php on line 46
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-50">
+<head>
+    <script src="./assets/js/mock-data.js"></script>
+<script src="./assets/js/mock-api.js"></script>
+<script src="./assets/custom/anti-theft.min.js" defer></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Giriş Yap | Quantum AI Gümrük Müşavirliği Müşteri & Yönetim Portalı</title>
+    
+        <!-- Kod Koruma & Anti-Theft Kalkanı (*.sinankeskin.com.tr) -->
+    <script src="./assets/custom/anti-theft.min.js" defer></script>
+        
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/png" sizes="192x192" href="./uploads/musavirlik/x-icon-png.png">
+    <link rel="apple-touch-icon" href="./uploads/musavirlik/x-icon-png.png">
+    
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8',
+                        accent: '#2563eb',
+                        surface: '#ffffff'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Menlo', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome 6 Pro CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Arka Plan Kurumsal Hafif Izgara Deseni */
+        .tg-light-bg {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.06) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.06) 0px, transparent 50%),
+                linear-gradient(to right, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(226, 232, 240, 0.5) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+        }
+
+        /* Modal Scroll Kilitleme */
+        body.tg-modal-open {
+            overflow: hidden !important;
+        }
+
+        .tg-glass-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+        }
+
+        /* Input Focus Stilleri */
+        .tg-input {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            transition: all 0.2s ease;
+        }
+        .tg-input:focus {
+            background-color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+            outline: none;
+        }
+
+        /* Custom Scrollbar for Modals */
+        .tg-modal-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tg-modal-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .tg-modal-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between tg-light-bg text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- ========================================================================= -->
+    <!-- 1. ÜST HEADER: LOGO, GÜVENLİK BİLGİSİ & GERİ DÖNÜŞ                          -->
+    <!-- ========================================================================= -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3 group transition" title="Ana Sayfaya Dön">
+            <img src="./uploads/musavirlik/x-logo-png.png" alt="Quantum AI Gümrük Müşavirliği" class="h-9 sm:h-10 w-auto object-contain transition group-hover:scale-105" onerror="this.onerror=null; this.src='./uploads/musavirlik/x-icon-png.png';">
+            <div class="flex flex-col">
+                <span class="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 group-hover:text-blue-600 transition">Quantum AI Gümrük Müşavirliği</span>
+                <span class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">Kurumsal Portal Masası</span>
+            </div>
+        </a>
+
+        <div class="flex items-center gap-2 sm:gap-4">
+            <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-white rounded-lg border border-slate-200/80 transition shadow-sm">
+                <i class="fa-solid fa-arrow-left text-[11px]"></i>
+                <span class="hidden sm:inline">Web Sitesine Dön</span>
+            </a>
+            <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-bold text-emerald-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>SSL 256-Bit Güvenli Bağlantı</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================================= -->
+    <!-- 2. ANA GİRİŞ ALANI & KART                                                 -->
+    <!-- ========================================================================= -->
+    <main class="flex-1 flex items-center justify-center px-4 sm:px-6 py-8">
+        <div class="w-full max-w-md">
+
+            <!-- Bildirimler (Çıkış Başarılı / Hata) -->
+            
+            
+            <!-- Giriş Kartı -->
+            <div class="tg-glass-card rounded-3xl p-6 sm:p-8 shadow-xl">
+                
+                <!-- Kart Başlığı & Rozet -->
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-3 shadow-sm">
+                        <i class="fa-solid fa-shield-halved text-blue-600"></i>
+                        <span>Yetkili Müşteri & Yönetim Paneli</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Portala Giriş Yapın</h1>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">Beyanname takibi, gümrük operasyonları ve dosya yönetimi</p>
+                </div>
+
+                <!-- Form Alanı -->
+                <form id="tg-login-form" method="post" action="javascript:void(0)" class="space-y-4">
+                    <input type="hidden" id="tg_login_nonce" name="tg_login_nonce" value="92be222785" /><input type="hidden" name="_wp_http_referer" value="/" />                    <input type="hidden" name="tg_login_submit" value="1">
+                    <input type="hidden" name="redirect_to" value="">
+
+                    <!-- Kullanıcı Adı / E-Posta -->
+                    <div>
+                        <label for="tg_user_login" class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                            <span>Kullanıcı Adı veya E-Posta</span>
+                            <span class="text-[10px] text-slate-400 font-mono font-normal">Zorunlu</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-user text-xs"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                name="log" 
+                                id="tg_user_login" 
+                                required 
+                                autocomplete="username"
+                                placeholder="Örn: demo_musteri veya e-posta" 
+                                class="tg-input w-full pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Parola -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="tg_user_pass" class="block text-xs font-bold text-slate-700">Parola</label>
+                            <button type="button" onclick="tgOpenModal('tg-forgot-modal')" class="text-[11px] text-blue-600 hover:text-blue-800 font-bold transition">Şifremi Unuttum?</button>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-lock text-xs"></i>
+                            </span>
+                            <input 
+                                type="password" 
+                                name="pwd" 
+                                id="tg_user_pass" 
+                                required 
+                                autocomplete="current-password"
+                                placeholder="••••••••" 
+                                class="tg-input w-full pl-10 pr-10 py-2.5 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium">
+                            <button type="button" onclick="tgTogglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition" aria-label="Parolayı Göster/Gizle">
+                                <i id="tg-eye-icon" class="fa-regular fa-eye text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Beni Hatırla & Güvenlik Bildirimi -->
+                    <div class="flex items-center justify-between pt-1">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" name="rememberme" value="forever" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <span class="text-xs text-slate-600 font-medium">Beni hatırla</span>
+                        </label>
+                        <span class="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
+                            <i class="fa-solid fa-shield text-[10px] text-emerald-600"></i>
+                            <span>TLS Güvenli</span>
+                        </span>
+                    </div>
+
+                    <!-- Giriş Butonu -->
+                    <button 
+                        type="submit" 
+                        id="tg-login-button" 
+                        class="w-full mt-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:pointer-events-none">
+                        <span id="tg-login-btn-text">Güvenli Giriş Yap</span>
+                        <i id="tg-login-btn-icon" class="fa-solid fa-arrow-right text-xs"></i>
+                        <i id="tg-login-btn-spinner" class="fa-solid fa-circle-notch fa-spin text-sm hidden"></i>
+                    </button>
+
+                    <!-- Canlı Hata Mesaj Alanı (AJAX için) -->
+                    <div id="tg-ajax-alert" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+                </form>
+
+                <!-- Demo Hızlı Giriş Butonları (Kullanıcı Kolaylığı İçin) -->
+                <div class="mt-6 pt-5 border-t border-slate-200">
+                    <div class="flex items-center justify-between mb-2.5">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hızlı Demo Girişi:</span>
+                        <span class="text-[10px] text-slate-400 font-mono">Şifre: demo123</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button 
+                            type="button" 
+                            onclick="tgFillDemo('demo_musteri', 'demo123')" 
+                            class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200/80 hover:border-blue-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-user-tie text-blue-600 text-xs"></i>
+                            <span>Demo Müşteri</span>
+                        </button>
+                        <button 
+                            type="button" 
+                            onclick="tgFillDemo('demo_musavir', 'demo123')" 
+                            class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200/80 hover:border-indigo-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-user-shield text-indigo-600 text-xs"></i>
+                            <span>Demo Müşavir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- İletişim / Destek Modal Linki -->
+                <div class="mt-5 text-center">
+                    <p class="text-xs text-slate-500">
+                        Hesabınız yok mu veya yetki mi talep ediyorsunuz?<br>
+                        <button type="button" onclick="tgOpenModal('tg-login-contact-modal')" class="mt-1 font-bold text-blue-600 hover:text-blue-800 underline underline-offset-2 transition">
+                            <i class="fa-solid fa-headset mr-1"></i> Müşavirliğimizle İletişime Geçin
+                        </button>
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Kart Altı Yardımcı Menü (Tümü Modal Olarak Açılır) -->
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500">
+                <button type="button" onclick="tgOpenGtipModal()" class="hover:text-blue-600 transition flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-barcode text-amber-600"></i>
+                    <span>Canlı GTİP Arama</span>
+                </button>
+                <span class="text-slate-300">•</span>
+                <button type="button" onclick="tgOpenModal('tg-kvkk-modal')" class="hover:text-blue-600 transition flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-user-lock text-slate-400"></i>
+                    <span>Gizlilik & KVKK</span>
+                </button>
+                <span class="text-slate-300">•</span>
+                <button type="button" onclick="tgOpenModal('tg-terms-modal')" class="hover:text-blue-600 transition flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-file-contract text-slate-400"></i>
+                    <span>Kullanım Koşulları</span>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- 3. ALT FOOTER BİLGİSİ                                                     -->
+    <!-- ========================================================================= -->
+    <footer class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 text-center text-xs text-slate-400 border-t border-slate-200/80">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>&copy; 2026 Quantum AI Gümrük Müşavirliği. Tüm Hakları Saklıdır.</span>
+            <div class="flex items-center gap-3 text-[11px] text-slate-500 font-medium">
+                <span>Tel: +90 (535) 835 61 77</span>
+                <span>•</span>
+                <span>E-Posta: info@sinankeskin.com.tr</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================================================= -->
+    <!-- 4. MODALLAR (TÜMÜ SAYFA DIŞINA YÖNLENDİRMEDEN POPUP OLARAK AÇILIR)        -->
+    <!-- ========================================================================= -->
+
+    <!-- MODAL 1: MÜŞAVİRLİK DESTEK & İLETİŞİM MODALI -->
+    <div id="tg-login-contact-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
+            <!-- Modal Header -->
+            <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Müşavirliğimizle İletişime Geçin</h3>
+                        <p class="text-xs text-slate-500 font-medium">Yeni portal hesabı açma veya yetki talepleri</p>
+                    </div>
+                </div>
+                <button type="button" onclick="tgCloseModal('tg-login-contact-modal')" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-5 sm:p-6 overflow-y-auto tg-modal-scroll space-y-5 text-xs text-slate-600">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Operasyon Santral</span>
+                        <a href="tel:+905358356177" class="font-extrabold text-slate-900 text-xs hover:text-blue-600 flex items-center gap-1.5">
+                            <i class="fa-solid fa-phone text-blue-600"></i>
+                            <span>+90 (535) 835 61 77</span>
+                        </a>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Resmi E-Posta</span>
+                        <a href="mailto:info@sinankeskin.com.tr" class="font-extrabold text-slate-900 text-xs hover:text-blue-600 flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-envelope text-blue-600"></i>
+                            <span class="truncate">info@sinankeskin.com.tr</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200 text-blue-900 text-xs">
+                    <div class="font-bold flex items-center gap-1.5 mb-1">
+                        <i class="fa-solid fa-circle-info text-blue-600"></i>
+                        <span>Yetki ve Kullanıcı Açma Prosedürü</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-blue-800">
+                        Şirketiniz adına gümrük müşavirliği portal erişim hesabı açılması için şirket vergi levhanız ve yetki belgenizle birlikte aşağıdaki formdan mesajınızı iletebilirsiniz. Operasyon temsilcimiz 15 dakika içinde dönüş yapacaktır.
+                    </p>
+                </div>
+
+                <!-- Hızlı Talep Gönder Formu -->
+                <form id="tg-contact-quick-form" onsubmit="tgSubmitContactQuick(event)" class="space-y-3 pt-2 border-t border-slate-100">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Yetkili Adı Soyadı</label>
+                            <input type="text" id="tg_c_name" required placeholder="Adınız Soyadınız" class="tg-input w-full px-3 py-2 rounded-xl text-xs text-slate-900 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Firma / Ünvan</label>
+                            <input type="text" id="tg_c_company" required placeholder="Firma Adı" class="tg-input w-full px-3 py-2 rounded-xl text-xs text-slate-900 font-medium">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Telefon Numarası</label>
+                            <input type="tel" id="tg_c_phone" required placeholder="0532 000 00 00" class="tg-input w-full px-3 py-2 rounded-xl text-xs text-slate-900 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">E-Posta Adresi</label>
+                            <input type="email" id="tg_c_email" required placeholder="adiniz@sirketiniz.com" class="tg-input w-full px-3 py-2 rounded-xl text-xs text-slate-900 font-medium">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Talebiniz / Notunuz</label>
+                        <textarea id="tg_c_message" rows="2" required placeholder="Portal hesabı talebi veya gümrükleme hizmeti hakkında kısa bilgi..." class="tg-input w-full px-3 py-2 rounded-xl text-xs text-slate-900 font-medium"></textarea>
+                    </div>
+                    
+                    <button type="submit" id="tg-c-submit-btn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+                        <span>Talebi Müşavirliğe İlet</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                    <div id="tg-c-result" class="hidden p-2.5 rounded-xl text-xs font-semibold text-center"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: GTİP SORGULAMA & VERGİ HESAPLAMA MODAL PENCERESİ (Ana Sayfa ile Birebir Aynı) -->
+    <div id="tg-gtip-modal" onclick="if(event.target===this) tgCloseGtipModal()" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/50 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+        <div class="tg-glass-card max-w-4xl w-full max-h-[90vh] flex flex-col p-6 sm:p-8 shadow-2xl relative transform scale-95 transition-all duration-300 overflow-hidden rounded-3xl" id="tg-gtip-modal-card">
+            
+            <!-- Kapat Butonu -->
+            <button onclick="tgCloseGtipModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm transition cursor-pointer z-10" aria-label="Kapat">
+                ✕
+            </button>
+
+            <!-- Başlık & Sekmeler -->
+            <div class="mb-4 shrink-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                    <span class="text-xs font-extrabold text-blue-600 uppercase tracking-wider">T.C. Ticaret Bakanlığı TARA Entegrasyonu</span>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-black text-slate-900">GTİP & İthalat Vergi Masası</h3>
+                
+                <!-- Sekme Butonları -->
+                <div class="flex items-center gap-3 mt-3 border-b border-slate-200 pb-2">
+                    <button type="button" onclick="tgSwitchGtipTab('search')" id="tg-tab-btn-search" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>GTİP & Tarife Arama</span>
+                    </button>
+                    <button type="button" onclick="tgSwitchGtipTab('calc')" id="tg-tab-btn-calc" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>İthalat Vergisi Hesaplama Simülatörü</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal İçeriği (Scrollable) -->
+            <div class="overflow-y-auto flex-1 pr-1 tg-modal-scroll" id="tg-gtip-modal-body">
+                
+                <!-- SEKME 1: GTİP ARAMA -->
+                <div id="tg-tab-content-search" class="space-y-4">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div class="flex-1 flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-slate-300 focus-within:border-blue-600">
+                                <i class="fa-solid fa-search text-slate-400 text-xs"></i>
+                                <input type="text" id="tg-modal-search-input" placeholder="GTİP kodu (örn: 8471.30.00) veya ürün adı (örn: Bilgisayar, Kahve)..." 
+                                       class="w-full text-xs text-slate-800 bg-transparent outline-none font-medium"
+                                       onkeydown="if(event.key==='Enter') tgExecuteGtipSearch()">
+                            </div>
+                            <button type="button" onclick="tgExecuteGtipSearch()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <span>Sorgula</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Hızlı Örnekler -->
+                        <div class="flex flex-wrap gap-1.5 mt-2.5 pt-2 border-t border-slate-200/80">
+                            <span class="text-[10px] text-slate-400 font-bold self-center mr-1">Örnekler:</span>
+                            <button type="button" onclick="tgFillSearch('8471.30.00')" class="px-2 py-0.5 bg-white text-slate-700 hover:text-blue-600 rounded text-[11px] border border-slate-200 font-medium cursor-pointer">8471.30 (Laptop)</button>
+                            <button type="button" onclick="tgFillSearch('8703.23.19')" class="px-2 py-0.5 bg-white text-slate-700 hover:text-blue-600 rounded text-[11px] border border-slate-200 font-medium cursor-pointer">8703.23 (Otomobil)</button>
+                            <button type="button" onclick="tgFillSearch('0901.21.00')" class="px-2 py-0.5 bg-white text-slate-700 hover:text-blue-600 rounded text-[11px] border border-slate-200 font-medium cursor-pointer">0901.21 (Kavrulmuş Kahve)</button>
+                            <button type="button" onclick="tgFillSearch('6109.10.00')" class="px-2 py-0.5 bg-white text-slate-700 hover:text-blue-600 rounded text-[11px] border border-slate-200 font-medium cursor-pointer">6109.10 (Pamuklu Tişört)</button>
+                        </div>
+                    </div>
+
+                    <!-- Sonuç Alanı -->
+                    <div id="tg-gtip-results-area" class="space-y-3">
+                        <div class="text-center py-8 text-slate-400 text-xs">
+                            <i class="fa-solid fa-barcode text-3xl mb-2 block opacity-40"></i>
+                            Aramak istediğiniz GTİP kodunu veya ürün adını yukarıya yazıp "Sorgula"ya basınız.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEKME 2: İTHALAT VERGİSİ HESAPLAMA SİMÜLATÖRÜ -->
+                <div id="tg-tab-content-calc" class="hidden space-y-4">
+                    <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200/80 text-xs text-blue-900 leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1 text-blue-600"></i>
+                        <strong>Mevzuat Formülü:</strong> CIF Mal Bedeli üzerinden Gümrük Vergisi (GV), ardından GV eklenmiş matrah üzerinden ÖTV, son olarak tüm maliyetler toplamı üzerinden KDV hesaplanmaktadır.
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Eşya Mal Bedeli (CIF)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="tg_calc_cif" value="10000" min="0" step="100" class="flex-1 text-xs p-2.5 rounded-lg border border-slate-300 focus:border-blue-600 outline-none bg-white font-mono" oninput="tgCalculateCustoms()">
+                                <select id="tg_calc_currency" class="w-20 text-xs p-2.5 rounded-lg border border-slate-300 bg-white font-bold" onchange="tgCalculateCustoms()">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="TL">TL</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">TCMB Gümrük Kuru (TL)</label>
+                            <input type="number" id="tg_calc_rate" value="38.50" min="1" step="0.01" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:border-blue-600 outline-none bg-white font-mono" oninput="tgCalculateCustoms()">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Gümrük Vergisi Oranı (%)</label>
+                            <input type="number" id="tg_calc_gv" value="4.5" min="0" max="100" step="0.1" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:border-blue-600 outline-none bg-white font-mono" oninput="tgCalculateCustoms()">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">ÖTV Oranı (%)</label>
+                            <input type="number" id="tg_calc_otv" value="0" min="0" max="250" step="1" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:border-blue-600 outline-none bg-white font-mono" oninput="tgCalculateCustoms()">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">KDV Oranı (%)</label>
+                            <select id="tg_calc_kdv" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 bg-white font-bold" onchange="tgCalculateCustoms()">
+                                <option value="20" selected>%20 (Genel Oran)</option>
+                                <option value="10">%10 (İndirimli Oran)</option>
+                                <option value="1">%1 (Temel Gıda / Tarım)</option>
+                                <option value="0">%0 (Muaf)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Damga Vergisi & Ardiye (TL)</label>
+                            <input type="number" id="tg_calc_damga" value="1450" min="0" step="50" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:border-blue-600 outline-none bg-white font-mono" oninput="tgCalculateCustoms()">
+                        </div>
+                    </div>
+
+                    <!-- Hesaplama Özeti Kartı -->
+                    <div class="mt-4 p-4 rounded-xl bg-slate-900 text-white space-y-2.5 font-mono text-xs">
+                        <div class="flex justify-between text-slate-300">
+                            <span>CIF Mal Bedeli (TL Karşılığı):</span>
+                            <span id="tg_out_cif_tl" class="font-bold text-white">385.000,00 ₺</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span>Gümrük Vergisi (GV):</span>
+                            <span id="tg_out_gv" class="font-bold text-amber-400">17.325,00 ₺</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span>Özel Tüketim Vergisi (ÖTV):</span>
+                            <span id="tg_out_otv" class="font-bold text-amber-400">0,00 ₺</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span>Katma Değer Vergisi (KDV):</span>
+                            <span id="tg_out_kdv" class="font-bold text-cyan-400">80.465,00 ₺</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span>Damga Vergisi & Harçlar:</span>
+                            <span id="tg_out_damga" class="font-bold text-slate-200">1.450,00 ₺</span>
+                        </div>
+                        <div class="pt-2.5 border-t border-slate-700 flex justify-between text-sm font-sans font-black">
+                            <span class="text-amber-400">TOPLAM ÖDENECEK VERGİ:</span>
+                            <span id="tg_out_toplam_vergi" class="text-amber-400 text-base">99.240,00 ₺</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-sans font-black">
+                            <span class="text-emerald-400">TOPLAM İTHALAT MALİYETİ:</span>
+                            <span id="tg_out_toplam_maliyet" class="text-emerald-400 text-base">484.240,00 ₺</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL 3: GİZLİLİK & KVKK METNİ MODALI -->
+    <div id="tg-kvkk-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
+            <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Gizlilik & KVKK Aydınlatma Metni</h3>
+                        <p class="text-xs text-slate-500 font-medium">6698 Sayılı Kişisel Verilerin Korunması Kanunu</p>
+                    </div>
+                </div>
+                <button type="button" onclick="tgCloseModal('tg-kvkk-modal')" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <div class="p-5 sm:p-6 overflow-y-auto tg-modal-scroll space-y-4 text-xs text-slate-600 leading-relaxed">
+                <p class="font-bold text-slate-900">1. Veri Sorumlusu ve Amacı</p>
+                <p>Quantum AI Gümrük Müşavirliği olarak; gümrük müşavirliği, dış ticaret operasyonları, vergi ve tarife mevzuatı çerçevesinde tarafımıza iletilen kişisel ve kurumsal verilerinizin gizliliğini en üst düzeyde koruyoruz.</p>
+
+                <p class="font-bold text-slate-900">2. İşlenen Veriler ve Hukuki Dayanak</p>
+                <p>Gümrük Kanunu, Kaçakçılıkla Mücadele Kanunu ve ilgili mevzuat uyarınca; vergi numaraları, yetkili kimlik bilgileri, konşimento, fatura, ATR/EUR.1 belgeleri ve beyanname ekleri gümrük idarelerine sunulmak üzere yasal zorunluluk kapsamında işlenmektedir.</p>
+
+                <p class="font-bold text-slate-900">3. Veri Güvenliği ve Şifreleme</p>
+                <p>Portalımız üzerinde gerçekleştirilen tüm oturumlar 256-bit SSL şifreleme ve gelişmiş erişim kontrol listeleri (ACL) ile korunmaktadır. Bilgileriniz hiçbir koşulda üçüncü taraf pazarlama ağlarıyla paylaşılmaz.</p>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button type="button" onclick="tgCloseModal('tg-kvkk-modal')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs transition">Anladım, Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: KULLANIM KOŞULLARI MODALI -->
+    <div id="tg-terms-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
+            <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Kullanım Koşulları & Güvenlik</h3>
+                        <p class="text-xs text-slate-500 font-medium">Portal kullanım şartları ve müşteri yükümlülükleri</p>
+                    </div>
+                </div>
+                <button type="button" onclick="tgCloseModal('tg-terms-modal')" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <div class="p-5 sm:p-6 overflow-y-auto tg-modal-scroll space-y-4 text-xs text-slate-600 leading-relaxed">
+                <p class="font-bold text-slate-900">1. Hesap Sorumluluğu</p>
+                <p>Müşteri, kendisine tahsis edilen kullanıcı adı ve şifrenin güvenliğinden sorumludur. Hesabınız üzerinden verilen tüm gümrük talimatları firmanızın yetkili beyanı olarak kabul edilir.</p>
+
+                <p class="font-bold text-slate-900">2. Belge Doğruluğu</p>
+                <p>Portala yüklenen fatura, menşe şahadetnamesi, çeki listesi ve beyanname belgelerinin aslına uygun ve güncel olması müşterinin kanuni yükümlülüğündedir.</p>
+
+                <p class="font-bold text-slate-900">3. Hizmet Sürekliliği</p>
+                <p>Sistemimiz 7/24 esasıyla hizmet vermekte olup, T.C. Ticaret Bakanlığı Bilge sistemi kesintileri ve planlı bakım çalışmaları haricinde kesintisiz erişim sağlanır.</p>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button type="button" onclick="tgCloseModal('tg-terms-modal')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs transition">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: ŞİFREMİ UNUTTUM MODALI -->
+    <div id="tg-forgot-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
+            <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Şifremi Unuttum</h3>
+                        <p class="text-xs text-slate-500 font-medium">Şifre sıfırlama veya yeni parola belirleme</p>
+                    </div>
+                </div>
+                <button type="button" onclick="tgCloseModal('tg-forgot-modal')" class="w-8 h-8 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <div class="p-5 sm:p-6 space-y-4 text-xs text-slate-600">
+                <p>Kayıtlı e-posta adresinizi girerek şifre sıfırlama bağlantısı talep edebilirsiniz. Kurumsal güvenlik prosedürleri gereği sıfırlama bağlantısı sadece resmi şirket e-posta adresinize iletilir.</p>
+
+                <form onsubmit="tgHandleForgotPassword(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Kayıtlı E-Posta Adresiniz</label>
+                        <input type="email" id="tg_forgot_email" required placeholder="adiniz@sirketiniz.com" class="tg-input w-full px-3 py-2.5 rounded-xl text-xs text-slate-900 font-medium">
+                    </div>
+                    <button type="submit" id="tg-forgot-btn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+                        <span>Sıfırlama Bağlantısı Gönder</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                    <div id="tg-forgot-result" class="hidden p-3 rounded-xl text-xs font-semibold text-center"></div>
+                </form>
+
+                <div class="pt-3 border-t border-slate-100 text-center">
+                    <span class="text-slate-400">Veya acil işlemler için:</span><br>
+                    <a href="tel:+905358356177" class="font-bold text-blue-600 hover:underline">
+                        +90 (535) 835 61 77                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 5. JAVASCRIPT: MODAL, DEMO DOLUMU, AJAX VE GTİP ARAMA SİSTEMİ             -->
+    <!-- ========================================================================= -->
+    <script>
+        // Rest API Konfigürasyonu
+        const tgApiUrl = './api/gumruk/v1/auth/login';
+        const tgGtipApiUrl = './api/gumruk/v1/gtip-ara';
+        const tgContactApiUrl = './api/gumruk/v1/teklif-gonder';
+        const tgWpNonce = 'f9f12528e7';
+
+        // Modal Yönetimi (Sayfa Scroll Konumunu Tam Korur)
+        let tgSavedScrollY = 0;
+        function tgOpenModal(modalId) {
+            if (modalId === 'tg-gtip-modal') {
+                tgOpenGtipModal();
+                return;
+            }
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            tgSavedScrollY = window.scrollY || window.pageYOffset;
+            modal.classList.remove('hidden');
+            document.body.classList.add('tg-modal-open');
+        }
+
+        function tgCloseModal(modalId) {
+            if (modalId === 'tg-gtip-modal') {
+                tgCloseGtipModal();
+                return;
+            }
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.classList.remove('tg-modal-open');
+            window.scrollTo(0, tgSavedScrollY);
+        }
+
+        function tgOpenGtipModal(initialQuery = '', tab = 'search') {
+            const modal = document.getElementById('tg-gtip-modal');
+            const card = document.getElementById('tg-gtip-modal-card');
+            if (!modal || !card) return;
+            tgSavedScrollY = window.scrollY || window.pageYOffset;
+            document.body.classList.add('tg-modal-open');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+
+            tgSwitchGtipTab(tab);
+
+            if (initialQuery) {
+                const input = document.getElementById('tg-modal-search-input');
+                if (input) {
+                    input.value = initialQuery;
+                    tgExecuteGtipSearch();
+                }
+            }
+        }
+
+        function tgCloseGtipModal() {
+            const modal = document.getElementById('tg-gtip-modal');
+            const card = document.getElementById('tg-gtip-modal-card');
+            if (!modal || !card) return;
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            card.classList.add('scale-95');
+            card.classList.remove('scale-100');
+            document.body.classList.remove('tg-modal-open');
+            window.scrollTo(0, tgSavedScrollY);
+        }
+
+        // Dışına tıklayınca modal kapatma
+        window.addEventListener('click', function(e) {
+            const gtipModal = document.getElementById('tg-gtip-modal');
+            if (gtipModal && e.target === gtipModal) {
+                tgCloseGtipModal();
+            }
+            ['tg-login-contact-modal', 'tg-kvkk-modal', 'tg-terms-modal', 'tg-forgot-modal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && e.target === el) {
+                    tgCloseModal(id);
+                }
+            });
+        });
+
+        // ESC tuşuna basınca modal kapatma
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                tgCloseGtipModal();
+                ['tg-login-contact-modal', 'tg-kvkk-modal', 'tg-terms-modal', 'tg-forgot-modal'].forEach(id => {
+                    tgCloseModal(id);
+                });
+            }
+        });
+
+        // Parola Göster/Gizle
+        function tgTogglePasswordVisibility() {
+            const pass = document.getElementById('tg_user_pass');
+            const icon = document.getElementById('tg-eye-icon');
+            if (pass.type === 'password') {
+                pass.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash text-xs text-blue-600';
+            } else {
+                pass.type = 'password';
+                icon.className = 'fa-regular fa-eye text-xs text-slate-400';
+            }
+        }
+
+        // Demo Kullanıcı Doldurma & Otomatik Gönderme
+        function tgFillDemo(user, pass) {
+            document.getElementById('tg_user_login').value = user;
+            document.getElementById('tg_user_pass').value = pass;
+            const form = document.getElementById('tg-login-form');
+            if (form) {
+                // AJAX login tetikle
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        }
+
+        // AJAX Giriş İşlemi
+        document.getElementById('tg-login-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('tg-login-button');
+            const btnText = document.getElementById('tg-login-btn-text');
+            const btnIcon = document.getElementById('tg-login-btn-icon');
+            const btnSpinner = document.getElementById('tg-login-btn-spinner');
+            const alertBox = document.getElementById('tg-ajax-alert');
+
+            const username = document.getElementById('tg_user_login').value.trim();
+            const password = document.getElementById('tg_user_pass').value;
+            const remember = document.querySelector('input[name="rememberme"]')?.checked || false;
+            const redirectTo = document.querySelector('input[name="redirect_to"]')?.value || '';
+
+            if (!username || !password) {
+                alertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-700 block';
+                alertBox.textContent = 'Lütfen kullanıcı adı ve parolanızı eksiksiz giriniz.';
+                return;
+            }
+
+            // Buton Yükleniyor Durumu
+            btn.disabled = true;
+            btnText.textContent = 'Doğrulanıyor...';
+            btnIcon.classList.add('hidden');
+            btnSpinner.classList.remove('hidden');
+            alertBox.classList.add('hidden');
+
+            try {
+                const response = await fetch(tgApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': tgWpNonce
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        remember: remember,
+                        redirect_to: redirectTo
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    alertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700 block';
+                    alertBox.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Giriş başarılı! Yönlendiriliyorsunuz...';
+                    btnText.textContent = 'Giriş Başarılı';
+                    
+                    setTimeout(() => {
+                        window.location.href = data.redirect_to || data.redirect_url || 'portal.html';
+                    }, 400);
+                } else {
+                    btn.disabled = false;
+                    btnText.textContent = 'Güvenli Giriş Yap';
+                    btnIcon.classList.remove('hidden');
+                    btnSpinner.classList.add('hidden');
+
+                    alertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-700 block';
+                    alertBox.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1.5"></i> ' + (data.message || 'Kullanıcı adı veya şifre hatalı.');
+                }
+            } catch (err) {
+                // AJAX başarısız olursa normal form POST yap
+                console.warn('AJAX login bağlantı hatası, normal form gönderiliyor...', err);
+                e.target.submit();
+            }
+        });
+
+        // =========================================================================
+        // GTİP & TARİFE VE İTHALAT HESAPLAMA SİSTEMİ (Ana Sayfa ile Birebir Aynı)
+        // =========================================================================
+        function tgSwitchGtipTab(tab) {
+            const btnSearch = document.getElementById('tg-tab-btn-search');
+            const btnCalc = document.getElementById('tg-tab-btn-calc');
+            const contentSearch = document.getElementById('tg-tab-content-search');
+            const contentCalc = document.getElementById('tg-tab-content-calc');
+            if (!btnSearch || !btnCalc || !contentSearch || !contentCalc) return;
+
+            if (tab === 'calc' || tab === 'calculator') {
+                btnSearch.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5 cursor-pointer';
+                btnCalc.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center gap-1.5 cursor-pointer';
+                contentSearch.classList.add('hidden');
+                contentCalc.classList.remove('hidden');
+                tgCalculateCustoms();
+            } else {
+                btnSearch.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center gap-1.5 cursor-pointer';
+                btnCalc.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5 cursor-pointer';
+                contentSearch.classList.remove('hidden');
+                contentCalc.classList.add('hidden');
+            }
+        }
+
+        function tgFillSearch(code) {
+            const input = document.getElementById('tg-modal-search-input');
+            if (input) {
+                input.value = code;
+                tgExecuteGtipSearch();
+            }
+        }
+
+        function tgExecuteGtipSearch() {
+            const input = document.getElementById('tg-modal-search-input');
+            const resultsArea = document.getElementById('tg-gtip-results-area');
+            if (!input || !resultsArea) return;
+
+            const q = input.value.trim();
+            if (!q) {
+                resultsArea.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs">Lütfen GTİP kodu veya ürün adı giriniz.</div>';
+                return;
+            }
+
+            resultsArea.innerHTML = `
+                <div class="text-center py-8 text-slate-500 text-xs flex flex-col items-center gap-2">
+                    <i class="fa-solid fa-spinner fa-spin text-blue-600 text-2xl"></i>
+                    <span>T.C. Ticaret Bakanlığı ve TARA veritabanı taranıyor...</span>
+                </div>
+            `;
+
+            const apiUrl = `${tgGtipApiUrl}?q=${encodeURIComponent(q)}`;
+            fetch(apiUrl)
+                .then(res => res.json())
+                .then(data => {
+                    const items = (data && data.success && Array.isArray(data.data)) ? data.data : (Array.isArray(data) ? data : []);
+                    if (items.length === 0) {
+                        resultsArea.innerHTML = `
+                            <div class="p-6 text-center bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
+                                <i class="fa-solid fa-circle-exclamation text-amber-500 text-2xl mb-2 block"></i>
+                                "<strong>${q}</strong>" ile eşleşen doğrudan tarife bulunamadı. Lütfen farklı bir arama terimi deneyiniz.
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    let html = `<div class="text-xs text-slate-500 mb-2 font-semibold">Bulunan Sonuçlar (${items.length}):</div>`;
+                    const fmtPercent = (val) => {
+                        if (val === undefined || val === null || val === '' || val === '-') return '-';
+                        val = String(val).trim();
+                        return val.startsWith('%') ? val : '%' + val;
+                    };
+
+                    items.forEach(item => {
+                        const gtipKod = item.gtip || item.kod || '0000.00.00.00';
+                        const tanim = item.tanim || item.aciklama || item.ad || '';
+                        const rawGv = item.gv ?? item.gumruk_vergisi ?? '-';
+                        const rawKdv = item.kdv ?? '%20';
+                        const rawOtv = item.otv ?? '-';
+                        const rawIgv = item.igv ?? '-';
+                        const mevzuatNote = item.mevzuat || item.notlar || '';
+
+                        const numGv = parseFloat(String(rawGv).replace(/[^0-9.]/g, '')) || 0;
+                        const numOtv = parseFloat(String(rawOtv).replace(/[^0-9.]/g, '')) || 0;
+                        const numKdv = parseFloat(String(rawKdv).replace(/[^0-9.]/g, '')) || 20;
+
+                        html += `
+                            <div class="p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-300 transition shadow-sm space-y-2">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2.5 py-1 bg-blue-50 text-blue-700 font-mono font-bold text-xs rounded-md border border-blue-200">
+                                            ${gtipKod}
+                                        </span>
+                                        <span class="text-xs font-bold text-slate-800">${tanim}</span>
+                                    </div>
+                                    <button type="button" onclick="tgTransferToCalc(${numGv}, ${numOtv}, ${numKdv})" class="px-2.5 py-1 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 text-[11px] font-bold rounded transition cursor-pointer">
+                                        Vergileri Hesapla →
+                                    </button>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-2 border-t border-slate-100">
+                                    <div class="p-1.5 bg-slate-50 rounded">Gümrük Vergisi: <strong class="text-slate-900">${fmtPercent(rawGv)}</strong></div>
+                                    <div class="p-1.5 bg-slate-50 rounded">KDV Oranı: <strong class="text-slate-900">${fmtPercent(rawKdv)}</strong></div>
+                                    <div class="p-1.5 bg-slate-50 rounded">ÖTV: <strong class="text-slate-900">${fmtPercent(rawOtv)}</strong></div>
+                                    <div class="p-1.5 bg-slate-50 rounded">İGV / İlave: <strong class="text-slate-900">${fmtPercent(rawIgv)}</strong></div>
+                                </div>
+                                ${mevzuatNote ? `<div class="text-[10px] text-slate-500 italic"><i class="fa-solid fa-info-circle mr-1 text-blue-600"></i>${mevzuatNote}</div>` : ''}
+                            </div>
+                        `;
+                    });
+
+                    resultsArea.innerHTML = html;
+                })
+                .catch(err => {
+                    resultsArea.innerHTML = `
+                        <div class="p-4 text-center text-xs text-red-600 bg-red-50 rounded-xl">
+                            Arama sırasında bir bağlantı hatası oluştu. Lütfen tekrar deneyiniz.
+                        </div>
+                    `;
+                });
+        }
+
+        function tgTransferToCalc(gv, otv, kdv) {
+            if (document.getElementById('tg_calc_gv')) document.getElementById('tg_calc_gv').value = gv;
+            if (document.getElementById('tg_calc_otv')) document.getElementById('tg_calc_otv').value = otv;
+            if (document.getElementById('tg_calc_kdv')) document.getElementById('tg_calc_kdv').value = kdv;
+            tgSwitchGtipTab('calc');
+        }
+
+        function tgCalculateCustoms() {
+            const cif = parseFloat(document.getElementById('tg_calc_cif')?.value) || 0;
+            const currency = document.getElementById('tg_calc_currency')?.value || 'USD';
+            const rate = parseFloat(document.getElementById('tg_calc_rate')?.value) || 1;
+            const gvPercent = parseFloat(document.getElementById('tg_calc_gv')?.value) || 0;
+            const otvPercent = parseFloat(document.getElementById('tg_calc_otv')?.value) || 0;
+            const kdvPercent = parseFloat(document.getElementById('tg_calc_kdv')?.value) || 20;
+            const damga = parseFloat(document.getElementById('tg_calc_damga')?.value) || 0;
+
+            const effectiveRate = (currency === 'TL') ? 1 : rate;
+            const cifTL = cif * effectiveRate;
+
+            // Gümrük Vergisi (GV)
+            const gvTL = cifTL * (gvPercent / 100);
+
+            // ÖTV Matrahı: CIF TL + GV
+            const otvMatrahi = cifTL + gvTL;
+            const otvTL = otvMatrahi * (otvPercent / 100);
+
+            // KDV Matrahı: CIF TL + GV + ÖTV + Damga/Harçlar
+            const kdvMatrahi = cifTL + gvTL + otvTL + damga;
+            const kdvTL = kdvMatrahi * (kdvPercent / 100);
+
+            const toplamVergi = gvTL + otvTL + kdvTL + damga;
+            const toplamMaliyet = cifTL + toplamVergi;
+
+            const fmt = (num) => num.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
+
+            if (document.getElementById('tg_out_cif_tl')) document.getElementById('tg_out_cif_tl').innerText = fmt(cifTL);
+            if (document.getElementById('tg_out_gv')) document.getElementById('tg_out_gv').innerText = fmt(gvTL);
+            if (document.getElementById('tg_out_otv')) document.getElementById('tg_out_otv').innerText = fmt(otvTL);
+            if (document.getElementById('tg_out_kdv')) document.getElementById('tg_out_kdv').innerText = fmt(kdvTL);
+            if (document.getElementById('tg_out_damga')) document.getElementById('tg_out_damga').innerText = fmt(damga);
+            if (document.getElementById('tg_out_toplam_vergi')) document.getElementById('tg_out_toplam_vergi').innerText = fmt(toplamVergi);
+            if (document.getElementById('tg_out_toplam_maliyet')) document.getElementById('tg_out_toplam_maliyet').innerText = fmt(toplamMaliyet);
+        }
+
+        // Hızlı İletişim Formu Gönderimi
+        async function tgSubmitContactQuick(e) {
+            e.preventDefault();
+            const btn = document.getElementById('tg-c-submit-btn');
+            const resBox = document.getElementById('tg-c-result');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Gönderiliyor...';
+
+            const payload = {
+                ad_soyad: document.getElementById('tg_c_name').value.trim(),
+                firma_adi: document.getElementById('tg_c_company').value.trim(),
+                telefon: document.getElementById('tg_c_phone').value.trim(),
+                eposta: document.getElementById('tg_c_email').value.trim(),
+                mesaj: document.getElementById('tg_c_message').value.trim(),
+                islem_turu: 'Giriş Sayfası Portal Hesabı Talebi'
+            };
+
+            try {
+                const res = await fetch(tgContactApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                resBox.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-800 block';
+                resBox.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> Talebiniz müşavirliğimize ulaştı! Operasyon ekibimiz en kısa sürede sizinle iletişime geçecektir.';
+                document.getElementById('tg-contact-quick-form').reset();
+            } catch (err) {
+                resBox.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-800 block';
+                resBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Gönderim sırasında hata oluştu. Lütfen santral numaramızdan bizi arayınız.';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Talebi Müşavirliğe İlet</span> <i class="fa-solid fa-paper-plane text-xs"></i>';
+            }
+        }
+
+        // Şifremi Unuttum Gönderimi
+        function tgHandleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('tg_forgot_email').value;
+            const res = document.getElementById('tg-forgot-result');
+            const btn = document.getElementById('tg-forgot-btn');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Sıfırlama Bağlantısı Gönder</span> <i class="fa-solid fa-paper-plane text-xs"></i>';
+                res.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-800 block';
+                res.innerHTML = `<strong>${email}</strong> adresine şifre sıfırlama yönergeleri gönderildi. Lütfen gelen kutunuzu kontrol ediniz.`;
+            }, 800);
+        }
+    </script>
+</body>
+</html>

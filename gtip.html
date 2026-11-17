@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-50 text-slate-900 scroll-smooth">
+<head>
+    <script src="./assets/js/mock-data.js"></script>
+<script src="./assets/js/mock-api.js"></script>
+<script src="./assets/custom/anti-theft.min.js" defer></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTİP Tarife Arama Motoru (TARA) | Quantum AI Gümrük Müşavirliği</title>
+    
+        
+    <!-- Favicon & Touch Icon -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/png" sizes="192x192" href="./uploads/musavirlik/x-icon-png.png">
+    <link rel="apple-touch-icon" href="./uploads/musavirlik/x-icon-png.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome Icons (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        [x-cloak] { display: none !important; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tara-content p { margin-bottom: 0.75rem; line-height: 1.6; }
+        .tara-content h2, .tara-content strong { color: #0f172a; }
+        .tara-content .mark { background-color: #fef08a; padding: 0.1rem 0.25rem; border-radius: 0.25rem; font-weight: 600; }
+    </style>
+
+    <script>
+        window.gumrukConfig = {
+            restUrl: "./api/gumruk/v1/"
+        };
+    </script>
+</head>
+<body class="min-h-full flex flex-col bg-slate-50 text-slate-800 antialiased font-sans" x-data="gtipApp()" x-init="init()">
+
+    <!-- TOPBAR (AÇIK TEMA) -->
+    <div class="bg-white border-b border-slate-200 text-xs text-slate-600 py-2.5 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-4">
+                <a href="tel:+905358356177" class="flex items-center gap-1.5 hover:text-blue-600 transition font-medium">
+                    <i class="fa-solid fa-phone text-blue-600"></i>
+                    <span>+90 (535) 835 61 77</span>
+                </a>
+                <span class="text-slate-300">|</span>
+                <span class="inline-flex items-center gap-1.5 text-slate-600">
+                    <i class="fa-solid fa-building-columns text-blue-600"></i>
+                    <span>T.C. Ticaret Bakanlığı TARA Entegrasyonu</span>
+                </span>
+                <span class="hidden md:inline-flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-[10px]"></i>
+                    <span>2024 - 2025 TGTC Canlı Tarife Cetveli</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://uygulama.gtb.gov.tr/Tara/" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 transition">
+                    <span>Resmi TARA Portalı</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVBAR (AÇIK TEMA) -->
+    <header class="bg-white/95 border-b border-slate-200 sticky top-0 z-40 backdrop-blur shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <img src="./uploads/musavirlik/x-logo-png.png" alt="Quantum AI Gümrük" class="h-11 w-auto object-contain" onerror="this.style.display='none'">
+                <div>
+                    <span class="font-extrabold text-base md:text-lg tracking-tight text-slate-900 block leading-tight group-hover:text-blue-600 transition">
+                        Quantum AI Gümrük Müşavirliği                    </span>
+                    <span class="text-xs text-blue-600 font-semibold tracking-wide">Tarife ve GTİP Arama Motoru</span>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+                <a href="index.html" class="hover:text-blue-600 transition">Ana Sayfa</a>
+                <a href="gtip.html" class="text-blue-600 font-bold transition flex items-center gap-1.5 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                    <i class="fa-solid fa-magnifying-glass text-blue-600"></i>
+                    <span>GTİP Arama</span>
+                </a>
+                <a href="index.html#hizmetler" class="hover:text-blue-600 transition">Hizmetlerimiz</a>
+                <a href="index.html#faydali-linkler" class="hover:text-blue-600 transition">Faydalı Linkler</a>
+                <a href="javascript:void(0)" onclick="tgOpenModal('Genel İletişim & Danışmanlık')" class="hover:text-blue-600 transition">İletişim</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                                    <a href="yonetim.html" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs font-bold transition">
+                        <i class="fa-solid fa-gauge-high text-blue-600"></i>
+                        <span>Yönetim</span>
+                    </a>
+                
+                                    <a href="portal.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm">
+                        <i class="fa-solid fa-user-check"></i>
+                        <span>Portala Git</span>
+                    </a>
+                
+                <button @click="mobilMenu = !mobilMenu" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobil Menü -->
+        <div x-show="mobilMenu" x-cloak class="md:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-2 text-sm font-semibold">
+            <a href="index.html" class="block py-2 text-slate-700 hover:text-blue-600">Ana Sayfa</a>
+            <a href="gtip.html" class="block py-2 text-blue-600 font-bold bg-blue-50 px-3 rounded-lg">GTİP Tarife Arama</a>
+            <a href="index.html#hizmetler" class="block py-2 text-slate-700 hover:text-blue-600">Hizmetlerimiz</a>
+            <a href="index.html#faydali-linkler" class="block py-2 text-slate-700 hover:text-blue-600">Faydalı Linkler</a>
+            <a href="javascript:void(0)" onclick="tgOpenModal('Genel İletişim & Danışmanlık')" class="block py-2 text-slate-700 hover:text-blue-600">İletişim</a>
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK (AÇIK TEMA) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- BAŞLIK & TARA ENTEGRASYON BİLGİ KARTI -->
+        <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-blue-50/60 rounded-full blur-3xl -z-0 pointer-events-none"></div>
+            
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-2 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold">
+                        <i class="fa-solid fa-scale-balanced text-blue-600"></i>
+                        <span>T.C. Ticaret Bakanlığı Tarife Arama Motoru (TARA) Uyumlu</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Gümrük Tarife İstatistik Pozisyonu (GTİP) Arama
+                    </h1>
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                        İthalat ve ihracat eşyalarınızın 12 haneli GTİP kodlarını, Gümrük Vergisi, KDV, ÖTV, İGV oranlarını sorgulayabilir; 
+                        T.C. Ticaret Bakanlığı TARA veritabanından <strong class="text-slate-900 font-semibold">resmi yasal izahnameleri ve fasıl notlarını</strong> canlı görüntüleyebilirsiniz.
+                    </p>
+                </div>
+
+                <!-- Hızlı İstatistik Rozetleri -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                        <span class="block text-xl font-extrabold text-blue-600 font-mono">21</span>
+                        <span class="text-[11px] font-semibold text-slate-500">Resmi Bölüm</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                        <span class="block text-xl font-extrabold text-indigo-600 font-mono">97</span>
+                        <span class="text-[11px] font-semibold text-slate-500">Tarife Faslı</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center col-span-2 sm:col-span-1">
+                        <span class="block text-xl font-extrabold text-emerald-600 font-mono">12 Hane</span>
+                        <span class="text-[11px] font-semibold text-slate-500">Milli Açılım</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB SEÇİMİ (TARA ARAMA MOTORU & VERGİ HESAPLAMA SİMÜLATÖRÜ) -->
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+            <button 
+                @click="aktifTab = 'arama'" 
+                :class="aktifTab === 'arama' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'"
+                class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>TARA GTİP & Tarife Arama</span>
+            </button>
+            <button 
+                @click="aktifTab = 'hesaplayici'" 
+                :class="aktifTab === 'hesaplayici' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'"
+                class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2">
+                <i class="fa-solid fa-calculator"></i>
+                <span>İthalat Vergisi & Maliyet Hesaplama Simülatörü</span>
+                <span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px]">Yeni</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: ARAMA MOTORU KONTROL MERKEZİ & TARİFE GEZGİNİ -->
+        <div x-show="aktifTab === 'arama'" class="space-y-6">
+            
+            <!-- Arama Paneli Kartı -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            
+            <!-- Arama Türü Seçimi (Radio Butonlar - TARA Gibi) -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-150">
+                <div class="flex items-center gap-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Arama Metodu:</span>
+                    
+                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                        <input type="radio" name="aramaTipi" value="kelime" x-model="aramaTipi" @change="ara()" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm font-bold" :class="aramaTipi === 'kelime' ? 'text-blue-600 font-extrabold' : 'text-slate-600'">
+                            <i class="fa-solid fa-font mr-1"></i> Kelimeden Arama
+                        </span>
+                    </label>
+
+                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                        <input type="radio" name="aramaTipi" value="gtip" x-model="aramaTipi" @change="ara()" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm font-bold" :class="aramaTipi === 'gtip' ? 'text-blue-600 font-extrabold' : 'text-slate-600'">
+                            <i class="fa-solid fa-barcode mr-1"></i> GTİP Kodundan Arama
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Fasıl Filtresi Dropdown -->
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-500">Fasıl Filtresi:</span>
+                    <select x-model="seciliFasil" @change="ara()" class="text-xs font-semibold bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Tüm Fasıllar (01 - 97)</option>
+                        <template x-for="(ad, kod) in fasillar" :key="kod">
+                            <option :value="kod" x-text="kod + ' - ' + ad"></option>
+                        </template>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Arama Kutusu & Butonu -->
+            <div class="space-y-3">
+                <div class="relative flex items-center">
+                    <div class="absolute left-4 text-slate-400 pointer-events-none text-lg">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <input 
+                        type="text" 
+                        x-model="sorgu" 
+                        @input.debounce.300ms="ara()" 
+                        @keydown.enter="ara()"
+                        :placeholder="aramaTipi === 'kelime' ? 'Aramak istediğiniz eşya adını yazın (Ör: Kahve, Otomobil, Bilgisayar, Elma, Çelik...)' : 'Aramak istediğiniz GTİP kodunu yazın (Ör: 0901, 8703, 8517, 847130000000...)'" 
+                        class="w-full pl-12 pr-28 py-4 bg-slate-50/80 border-2 border-slate-300 hover:border-blue-400 focus:border-blue-600 focus:bg-white rounded-xl text-base sm:text-lg font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition shadow-inner font-sans"
+                        autofocus
+                    >
+
+                    <!-- Temizle veya Ara Butonu -->
+                    <div class="absolute right-2 flex items-center gap-1.5">
+                        <button 
+                            x-show="sorgu.length > 0" 
+                            @click="sorgu = ''; ara()" 
+                            class="p-2 text-slate-400 hover:text-slate-700 rounded-lg transition"
+                            title="Temizle"
+                        >
+                            <i class="fa-solid fa-xmark text-base"></i>
+                        </button>
+
+                        <button 
+                            @click="ara()" 
+                            class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow-sm transition flex items-center gap-1.5"
+                        >
+                            <i class="fa-solid fa-search" x-show="!yukleniyor"></i>
+                            <i class="fa-solid fa-circle-notch fa-spin" x-show="yukleniyor" x-cloak></i>
+                            <span class="hidden sm:inline">Sorgula</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hızlı Arama Örnekleri (TARA Tarzı Çipler) -->
+                <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                    <span class="text-slate-400 font-bold">Örnek Aramalar:</span>
+                    
+                    <button @click="hizliArama('Kahve', 'kelime')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-medium text-slate-700">
+                        ☕ Kahve
+                    </button>
+                    <button @click="hizliArama('Otomobil', 'kelime')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-medium text-slate-700">
+                        🚗 Otomobil
+                    </button>
+                    <button @click="hizliArama('Bilgisayar', 'kelime')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-medium text-slate-700">
+                        💻 Bilgisayar
+                    </button>
+                    <button @click="hizliArama('Telefon', 'kelime')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-medium text-slate-700">
+                        📱 Akıllı Telefon
+                    </button>
+                    <button @click="hizliArama('0901', 'gtip')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-mono font-bold text-slate-700">
+                        0901
+                    </button>
+                    <button @click="hizliArama('8703', 'gtip')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-mono font-bold text-slate-700">
+                        8703
+                    </button>
+                    <button @click="hizliArama('8471', 'gtip')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-mono font-bold text-slate-700">
+                        8471
+                    </button>
+                    <button @click="hizliArama('8517', 'gtip')" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition font-mono font-bold text-slate-700">
+                        8517
+                    </button>
+                </div>
+            </div>
+
+            <!-- Görünüm Sekmeleri (Arama Sonuçları vs. 21 Bölüm / 97 Fasıl Ağacı) -->
+            <div class="flex items-center gap-2 border-b border-slate-200 pt-2">
+                <button 
+                    @click="aktifSekme = 'arama'" 
+                    class="px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition flex items-center gap-2"
+                    :class="aktifSekme === 'arama' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
+                >
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Tarife ve Vergi Sonuçları</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-mono font-bold" :class="aktifSekme === 'arama' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'" x-text="toplamSonuc"></span>
+                </button>
+
+                <button 
+                    @click="aktifSekme = 'agac'" 
+                    class="px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition flex items-center gap-2"
+                    :class="aktifSekme === 'agac' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
+                >
+                    <i class="fa-solid fa-sitemap"></i>
+                    <span>21 Bölüm & 97 Fasıl Gezgini</span>
+                </button>
+
+                <button 
+                    @click="aktifSekme = 'tara_canli'" 
+                    class="px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition flex items-center gap-2"
+                    :class="aktifSekme === 'tara_canli' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'"
+                >
+                    <i class="fa-solid fa-window-maximize"></i>
+                    <span>Canlı TARA Resmi Ekranı</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">Bakanlık Gömülü</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 1. SEKME: ARAMA SONUÇLARI LİSTESİ -->
+        <div x-show="aktifSekme === 'arama'" class="space-y-4">
+            
+            <!-- Sonuç Başlık ve Bilgi Şeridi -->
+            <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 px-1">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800" x-text="toplamSonuc + ' adet tarife pozisyonu listelendi'"></span>
+                    <span x-show="sorgu" class="text-slate-400">|</span>
+                    <span x-show="sorgu" class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200 font-medium">
+                        Aranan: "<strong x-text="sorgu"></strong>"
+                    </span>
+                    <span x-show="seciliFasil" class="bg-amber-50 text-amber-700 px-2 py-0.5 rounded border border-amber-200 font-medium">
+                        Fasıl: <strong x-text="seciliFasil"></strong>
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                    <i class="fa-solid fa-circle-info text-blue-500"></i>
+                    <span>Mevzuat veya vergi detayları için ilgili satırdaki <strong>İzahname</strong> butonuna tıklayınız.</span>
+                </div>
+            </div>
+
+            <!-- YÜKLENİYOR İNDİKATÖRÜ -->
+            <div x-show="yukleniyor" x-cloak class="bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-3">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-600"></i>
+                <p class="text-sm font-bold text-slate-700">Tarife veritabanı taranıyor...</p>
+            </div>
+
+            <!-- BOŞ SONUÇ DURUMU -->
+            <div x-show="!yukleniyor && sonuclar.length === 0" x-cloak class="bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-4">
+                <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-2xl">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-base font-bold text-slate-900">Aradığınız kriterlere uygun GTİP pozisyonu bulunamadı</h3>
+                    <p class="text-xs text-slate-500 max-w-md mx-auto">
+                        Farklı bir kelime (örnek: kahve, elma, otomobil, tişört) deneyebilir veya doğrudan 4 haneli pozisyon kodu (örnek: 0901, 8703, 8517) ile arayabilirsiniz.
+                    </p>
+                </div>
+                <button @click="sorgu = ''; seciliFasil = ''; ara()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition">
+                    Filtreleri Sıfırla
+                </button>
+            </div>
+
+            <!-- TARİFE KARTLARI TABLOSU (AÇIK TEMA) -->
+            <div x-show="!yukleniyor && sonuclar.length > 0" class="space-y-3">
+                <template x-for="(item, index) in sonuclar" :key="item.gtip">
+                    <div class="bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition space-y-4 group">
+                        
+                        <!-- Üst Şerit: GTİP Kodu, Fasıl ve Eylemler -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-150">
+                            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                                
+                                <!-- GTİP Kodu Badge -->
+                                <div class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg">
+                                    <span class="text-xs text-blue-600 font-bold uppercase tracking-wider">GTİP:</span>
+                                    <span class="font-mono font-extrabold text-blue-900 text-sm sm:text-base tracking-tight" x-text="item.gtip"></span>
+                                    
+                                    <!-- Kopyala Butonu -->
+                                    <button 
+                                        @click="kopyala(item.gtip)" 
+                                        class="ml-1 p-1 text-blue-500 hover:text-blue-800 rounded transition"
+                                        title="GTİP Kodunu Kopyala"
+                                    >
+                                        <i class="fa-solid fa-copy text-xs" x-show="kopyalandiGtip !== item.gtip"></i>
+                                        <i class="fa-solid fa-check text-xs text-emerald-600" x-show="kopyalandiGtip === item.gtip" x-cloak></i>
+                                    </button>
+                                </div>
+
+                                <!-- Fasıl Rozeti -->
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200" x-text="'Fasıl ' + item.fasil + ': ' + item.fasil_adi"></span>
+
+                                <!-- Ölçü Birimi -->
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="fa-solid fa-scale-unbalanced text-[10px] mr-1"></i>
+                                    <span x-text="'Ölçü: ' + item.birim"></span>
+                                </span>
+                            </div>
+
+                            <!-- Butonlar: Canlı Bakanlık İzahnamesi Aç & Maliyet Hesapla & TARA Doğrula -->
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button 
+                                    @click="hesaplayiciyaAktar(item)" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm"
+                                    title="Bu GTİP'in vergi ve ithalat maliyetini simüle et"
+                                >
+                                    <i class="fa-solid fa-calculator"></i>
+                                    <span>Maliyeti Hesapla</span>
+                                </button>
+
+                                <button 
+                                    @click="izahnameAc(item.gtip, item.tanim)" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-sm"
+                                >
+                                    <i class="fa-solid fa-book-open"></i>
+                                    <span>Bakanlık İzahnamesi (TARA)</span>
+                                </button>
+                                
+                                <a 
+                                    href="https://uygulama.gtb.gov.tr/Tara/" 
+                                    target="_blank" 
+                                    rel="noopener"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition"
+                                    title="T.C. Ticaret Bakanlığı TARA sitesinde doğrula"
+                                >
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Orta Kısım: Eşya Tanımı -->
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug group-hover:text-blue-600 transition" x-text="item.tanim"></h3>
+                        </div>
+
+                        <!-- Alt Kısım: Vergi Oranları & Mevzuat Notları Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+                            
+                            <!-- Gümrük Vergisi -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+                                <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Gümrük Vergisi (G.V.)</span>
+                                <span class="block font-bold text-slate-900 mt-0.5" x-text="item.gv"></span>
+                            </div>
+
+                            <!-- KDV Oranı -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+                                <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">KDV Oranı</span>
+                                <span class="block font-bold text-emerald-700 mt-0.5" x-text="item.kdv"></span>
+                            </div>
+
+                            <!-- ÖTV Oranı -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+                                <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">ÖTV Oranı</span>
+                                <span class="block font-bold text-slate-800 mt-0.5" x-text="item.otv"></span>
+                            </div>
+
+                            <!-- İlave Gümrük Vergisi (İGV) -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+                                <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">İlave Gümrük Vergisi</span>
+                                <span class="block font-bold text-slate-800 mt-0.5" x-text="item.igv"></span>
+                            </div>
+                        </div>
+
+                        <!-- İzin / Denetim / TAREKS Notu -->
+                        <div x-show="item.mevzuat" class="bg-amber-50/70 border border-amber-200 rounded-lg p-2.5 text-xs text-amber-900 flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 shrink-0"></i>
+                            <div>
+                                <span class="font-bold">Mevzuat / İzin Notu:</span>
+                                <span x-text="item.mevzuat"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- 2. SEKME: 21 BÖLÜM & 97 FASIL GEZGİNİ -->
+        <div x-show="aktifSekme === 'agac'" x-cloak class="space-y-4">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Türk Gümrük Tarife Cetveli (TGTC) 21 Bölüm Hiyerarşisi</h2>
+                    <p class="text-xs text-slate-500">Resmi tarife yapısında eşyalar 21 temel Bölüm altında 97 Fasıla ayrılmıştır. İlgili fasıla tıklayarak pozisyonları filtreleyebilirsiniz.</p>
+                </div>
+
+                <!-- Bölüm Akordeon Listesi -->
+                <div class="space-y-3">
+                    <template x-for="bolum in bolumler" :key="bolum.no">
+                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                            
+                            <!-- Bölüm Başlığı -->
+                            <button 
+                                @click="bolumAcik[bolum.no] = !bolumAcik[bolum.no]" 
+                                class="w-full px-5 py-3.5 bg-slate-50/80 hover:bg-slate-100 flex items-center justify-between text-left transition"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <span class="font-mono font-extrabold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded text-xs" x-text="'BÖLÜM ' + bolum.no"></span>
+                                    <span class="font-bold text-slate-800 text-sm" x-text="bolum.baslik"></span>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200 text-xs" :class="bolumAcik[bolum.no] ? 'rotate-180 text-blue-600' : ''"></i>
+                            </button>
+
+                            <!-- Bölümün Altındaki Fasıllar -->
+                            <div x-show="bolumAcik[bolum.no]" x-collapse class="p-4 bg-white border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+                                <template x-for="fasilKod in bolum.fasillar" :key="fasilKod">
+                                    <button 
+                                        @click="fasilSec(fasilKod)" 
+                                        class="p-2.5 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-left transition flex items-start gap-2 group"
+                                    >
+                                        <span class="font-mono font-bold text-blue-700 bg-blue-100/70 px-1.5 py-0.5 rounded text-[11px] shrink-0" x-text="'FASIL ' + fasilKod"></span>
+                                        <span class="text-slate-700 group-hover:text-blue-900 font-medium leading-tight" x-text="fasillar[fasilKod] || ('Fasıl ' + fasilKod)"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SEKME: CANLI TARA RESMİ BAKANLIK EKRANI (GÖMÜLÜ İFRAME) -->
+        <div x-show="aktifSekme === 'tara_canli'" x-cloak class="space-y-4">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-150">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-xs border border-blue-200">
+                                <i class="fa-solid fa-building-columns mr-1"></i> T.C. Ticaret Bakanlığı
+                            </span>
+                            <h2 class="text-sm sm:text-base font-extrabold text-slate-900">Gümrükler Genel Müdürlüğü Tarife Arama Motoru (TARA) Canlı Ekranı</h2>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Ticaret Bakanlığı resmi TARA arama sistemi doğrudan sayfa içerisine entegre edilmiştir.</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <a href="https://uygulama.gtb.gov.tr/Tara/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-bold transition flex items-center gap-1.5">
+                            <span>Yeni Sekmede Aç</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Gömülü TARA Iframe -->
+                <div class="w-full rounded-xl overflow-hidden border border-slate-300 shadow-inner bg-slate-50">
+                    <iframe 
+                        :src="restUrl + 'tara-iframe-proxy'" 
+                        class="w-full h-[780px] border-0" 
+                        loading="lazy" 
+                        title="T.C. Ticaret Bakanlığı TARA Canlı Ekranı">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        </div> <!-- /TAB 1: ARAMA MOTORU KONTROL MERKEZİ & TARİFE GEZGİNİ -->
+
+        <!-- TAB 2: İTHALAT VERGİSİ & MALİYET HESAPLAMA SİMÜLATÖRÜ -->
+        <div x-show="aktifTab === 'hesaplayici'" x-cloak class="space-y-6">
+            
+            <!-- Başlık ve Hızlı Senaryo Seçici Kartı -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-150">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-xs border border-blue-200">
+                                <i class="fa-solid fa-calculator mr-1"></i> BİLGE v3 Algoritması
+                            </span>
+                            <span class="text-xs text-slate-500 font-semibold">T.C. Gümrük Mevzuatı Uyumlu</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">İthalat Vergisi & Kademeli Maliyet Simülatörü</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                            FOB, navlun, sigorta, GV, İGV, ÖTV ve KDV matrahlarını Türk Gümrük Mevzuatındaki kademeli vergi zincirine göre anlık hesaplayın.
+                        </p>
+                    </div>
+
+                    <!-- Hızlı Hazır Senaryolar -->
+                    <div class="space-y-1.5 shrink-0">
+                        <span class="text-[11px] font-bold text-slate-400 block uppercase tracking-wider">Hızlı Örnek Senaryo:</span>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button @click="senaryoYukle('bilgisayar')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 text-xs font-semibold text-slate-700 transition">
+                                💻 Bilgisayar
+                            </button>
+                            <button @click="senaryoYukle('tekstil')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 text-xs font-semibold text-slate-700 transition">
+                                👕 Tekstil
+                            </button>
+                            <button @click="senaryoYukle('arac')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 text-xs font-semibold text-slate-700 transition">
+                                🚗 Otomobil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 Sütunlu Hesaplama Izgarası -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- SOL SÜTUN: GİRİŞ FORMU & PARAMETRELER (7 Kolon) -->
+                    <div class="lg:col-span-7 space-y-6">
+                        
+                        <!-- 1. Blok: Eşya ve Menşe -->
+                        <div class="bg-slate-50/80 rounded-xl p-5 border border-slate-200 space-y-4">
+                            <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+                                <h3 class="text-sm font-bold text-slate-900">Eşya ve Menşe Bilgileri</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Eşya Tanımı / Ürün Adı</label>
+                                    <input type="text" x-model="calc.urunAdi" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">GTİP Kodu</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" x-model="calc.gtipKodu" placeholder="8471.30.00.00.00" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-mono font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <button @click="aktifTab = 'arama'" class="p-2.5 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-xl text-xs font-bold transition shrink-0" title="GTİP Ara">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Menşe & Dolaşım Belgesi</label>
+                                    <select x-model="calc.mense" @change="menseDegisti()" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="ab_atr">Avrupa Birliği (A.TR Dolaşım Belgesi - %0 GV)</option>
+                                        <option value="uzakdogu">Çin & Uzakdoğu (Genel Rejim + İGV)</option>
+                                        <option value="abd">Amerika Birleşik Devletleri (Ek Mali Yükümlülük)</option>
+                                        <option value="diger">Diğer Ülkeler (Standart Tarife Cetveli)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Blok: Fatura & Kıymet (Döviz Bedelleri) -->
+                        <div class="bg-slate-50/80 rounded-xl p-5 border border-slate-200 space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold">2</span>
+                                    <h3 class="text-sm font-bold text-slate-900">Fatura Kıymeti, Navlun & Sigorta (Döviz)</h3>
+                                </div>
+                                <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                    CIF = FOB + Navlun + Sigorta
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Para Birimi</label>
+                                    <select x-model="calc.paraBirimi" @change="kurGuncelle()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-800">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                        <option value="TRY">TRY (₺)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Mal Bedeli (FOB)</label>
+                                    <input type="number" step="any" x-model.number="calc.fobBedeli" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-800">
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Navlun (Taşıma)</label>
+                                    <input type="number" step="any" x-model.number="calc.navlun" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-800">
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Sigorta Bedeli</label>
+                                    <input type="number" step="any" x-model.number="calc.sigorta" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-800">
+                                </div>
+                            </div>
+
+                            <!-- Döviz Kuru Girişi -->
+                            <div class="pt-2 flex items-center justify-between text-xs bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-600 font-semibold">TCMB Gümrük Efektif Satış Kuru:</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" step="0.0001" x-model.number="calc.dovizKuru" class="w-24 px-2 py-1 text-right font-mono font-bold bg-slate-50 border border-slate-300 rounded text-xs text-blue-900">
+                                    <span class="font-bold text-slate-700">₺</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Blok: Vergi Oranları (%) & Ek Masraflar -->
+                        <div class="bg-slate-50/80 rounded-xl p-5 border border-slate-200 space-y-4">
+                            <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold">3</span>
+                                <h3 class="text-sm font-bold text-slate-900">Gümrük Vergi Oranları & Tahmini Masraflar</h3>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Gümrük Vergisi (%)</label>
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" step="0.1" x-model.number="calc.gumrukVergisiOran" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800">
+                                        <span class="text-slate-400 font-bold">%</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">İlave GV (İGV) (%)</label>
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" step="0.1" x-model.number="calc.igvOran" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800">
+                                        <span class="text-slate-400 font-bold">%</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">ÖTV (%)</label>
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" step="0.1" x-model.number="calc.otvOran" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800">
+                                        <span class="text-slate-400 font-bold">%</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">KDV Oranı (%)</label>
+                                    <select x-model.number="calc.kdvOran" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800">
+                                        <option value="20">%20 (Standart)</option>
+                                        <option value="10">%10 (İndirimli)</option>
+                                        <option value="1">%1 (Temel Gıda vb.)</option>
+                                        <option value="0">%0 (İstisna)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Damga Vergisi & Tahmini Lokal Masraf -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Maktu Beyanname Damga Vergisi</label>
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" step="any" x-model.number="calc.damgaVergisi" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800">
+                                        <span class="text-slate-500 font-bold">₺</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Tahmini Ardiye & Terminal Masrafı</label>
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" step="any" x-model.number="calc.ardiyeMasraf" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800">
+                                        <span class="text-slate-500 font-bold">₺</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- SAĞ SÜTUN: CANLI RAPOR & KADEMELİ MATRAH HESABI (5 Kolon) -->
+                    <div class="lg:col-span-5 space-y-5 sticky top-24">
+                        
+                        <!-- ÖZET KART (BÜYÜK TOPLAM) -->
+                        <div class="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 rounded-2xl p-6 text-white shadow-xl space-y-4">
+                            <div class="flex items-center justify-between text-xs text-blue-200 border-b border-blue-500/30 pb-3">
+                                <span class="font-bold uppercase tracking-wider">İthalat Maliyet Özeti</span>
+                                <span class="px-2 py-0.5 rounded-full bg-white/10 font-mono font-bold text-emerald-300" x-text="'Efektif Vergi: %' + efektifVergiOrani()"></span>
+                            </div>
+
+                            <div class="space-y-1">
+                                <span class="text-xs text-blue-200">Toplam İthalat Maliyeti (Mal + Tüm Vergiler + Masraflar):</span>
+                                <div class="text-2xl sm:text-3xl font-black tracking-tight font-mono text-white" x-text="formatTL(genelToplamMaliyet())"></div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-blue-500/30 text-xs">
+                                <div>
+                                    <span class="text-blue-200 block text-[11px]">Toplam Gümrük Vergileri:</span>
+                                    <span class="font-extrabold text-amber-300 font-mono text-sm sm:text-base" x-text="formatTL(toplamVergi())"></span>
+                                </div>
+                                <div>
+                                    <span class="text-blue-200 block text-[11px]">CIF Gümrük Kıymeti:</span>
+                                    <span class="font-extrabold text-blue-100 font-mono text-sm sm:text-base" x-text="formatTL(cifTL())"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KADEMELİ VERGİ DAĞILIMI (BİLGE AKORDİYON LİSTESİ) -->
+                        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3 text-xs">
+                            <h4 class="font-bold text-slate-900 pb-2 border-b border-slate-150 flex items-center justify-between">
+                                <span>Kademeli Vergi & Matrah Zinciri</span>
+                                <span class="text-[10px] text-slate-400 font-normal">Resmi Sıralama</span>
+                            </h4>
+
+                            <!-- Adım 1: CIF Kıymet -->
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-800">1. Gümrük Kıymeti (CIF Matrahı)</span>
+                                    <span class="block text-[10px] text-slate-400" x-text="formatDoviz(cifDoviz()) + ' x ' + calc.dovizKuru + ' ₺'"></span>
+                                </div>
+                                <span class="font-mono font-bold text-slate-900" x-text="formatTL(cifTL())"></span>
+                            </div>
+
+                            <!-- Adım 2: Gümrük Vergisi -->
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-800" x-text="'2. Gümrük Vergisi (%' + calc.gumrukVergisiOran + ')'"></span>
+                                    <span class="block text-[10px] text-slate-400">CIF x GV Oranı</span>
+                                </div>
+                                <span class="font-mono font-bold text-blue-700" x-text="formatTL(gvTutari())"></span>
+                            </div>
+
+                            <!-- Adım 3: İlave Gümrük Vergisi -->
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-800" x-text="'3. İlave GV (%' + calc.igvOran + ')'"></span>
+                                    <span class="block text-[10px] text-slate-400">CIF x İGV Oranı</span>
+                                </div>
+                                <span class="font-mono font-bold text-blue-700" x-text="formatTL(igvTutari())"></span>
+                            </div>
+
+                            <!-- Adım 4: ÖTV -->
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-800" x-text="'4. ÖTV Tutarı (%' + calc.otvOran + ')'"></span>
+                                    <span class="block text-[10px] text-slate-400" x-text="'ÖTV Matrahı: ' + formatTL(otvMatrahi())"></span>
+                                </div>
+                                <span class="font-mono font-bold text-indigo-700" x-text="formatTL(otvTutari())"></span>
+                            </div>
+
+                            <!-- Adım 5: KDV -->
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-800" x-text="'5. KDV Tutarı (%' + calc.kdvOran + ')'"></span>
+                                    <span class="block text-[10px] text-slate-400" x-text="'KDV Matrahı: ' + formatTL(kdvMatrahi())"></span>
+                                </div>
+                                <span class="font-mono font-bold text-indigo-700" x-text="formatTL(kdvTutari())"></span>
+                            </div>
+
+                            <!-- Adım 6: Damga & Masraflar -->
+                            <div class="flex items-center justify-between py-1.5">
+                                <div>
+                                    <span class="font-bold text-slate-800">6. Damga Vergisi + Lokal Giderler</span>
+                                    <span class="block text-[10px] text-slate-400">Maktu Damga + Ardiye & Terminal</span>
+                                </div>
+                                <span class="font-mono font-bold text-slate-700" x-text="formatTL((parseFloat(calc.damgaVergisi)||0) + (parseFloat(calc.ardiyeMasraf)||0))"></span>
+                            </div>
+                        </div>
+
+                        <!-- ETKİLEŞİM VE DANIŞMANLIK BUTONLARI -->
+                        <div class="space-y-2">
+                            <button 
+                                @click="raporKopyala()" 
+                                class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
+                            >
+                                <i class="fa-solid fa-copy" x-show="!calc.kopyalandi"></i>
+                                <i class="fa-solid fa-check text-emerald-300" x-show="calc.kopyalandi" x-cloak></i>
+                                <span x-text="calc.kopyalandi ? 'Maliyet Raporu Panoya Kopyalandı!' : 'Resmi Maliyet Raporunu Kopyala (WhatsApp / Mail)'"></span>
+                            </button>
+
+                            <button 
+                                @click="danismanaSor()" 
+                                class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md"
+                            >
+                                <i class="fa-solid fa-user-tie"></i>
+                                <span>Bu Verilerle Baş Müşavir AI'ya Danış</span>
+                            </button>
+                        </div>
+
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed flex items-start gap-2">
+                            <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5 shrink-0"></i>
+                            <div>
+                                <strong>Yasal Uyarı:</strong> Bu simülasyon hesaplaması bilgi amaçlıdır. Nihai ithalat vergileri tescil tarihindeki resmi TCMB kuru, GTİP izahnamesi ve gümrük muayene hattı (Kırmızı/Sarı Hat) tespitlerine göre belirlenir.
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div> <!-- /TAB 2: İTHALAT VERGİSİ & MALİYET HESAPLAMA SİMÜLATÖRÜ -->
+
+    </main>
+
+    <!-- T.C. TİCARET BAKANLIĞI RESMİ İZAHNAME MODAL PENCERESİ (AÇIK TEMA) -->
+    <div 
+        x-show="modalAcik" 
+        x-cloak 
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+        @keydown.escape.window="modalAcik = false"
+    >
+        <div 
+            class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden"
+            @click.away="modalAcik = false"
+        >
+            <!-- Modal Başlık Şeridi -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 bg-blue-600 text-white rounded font-mono font-bold text-xs" x-text="modalGtip"></span>
+                        <span class="text-xs font-bold text-blue-700 uppercase tracking-wider">T.C. Ticaret Bakanlığı Resmi İzahnamesi (TARA)</span>
+                    </div>
+                    <h2 class="text-sm sm:text-base font-extrabold text-slate-900 truncate max-w-xl" x-text="modalBaslik"></h2>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button @click="yazdir()" class="p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-200 transition" title="Yazdır">
+                        <i class="fa-solid fa-print"></i>
+                    </button>
+                    <button @click="modalAcik = false" class="p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-200 transition" title="Kapat">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal İçerik Alanı -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800 text-sm leading-relaxed" id="tara-izahname-print">
+                
+                <!-- Yükleniyor Durumu -->
+                <div x-show="modalYukleniyor" class="py-16 text-center space-y-3">
+                    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-600"></i>
+                    <p class="text-sm font-bold text-slate-700">T.C. Ticaret Bakanlığı TARA sunucularından resmi izahname çekiliyor...</p>
+                    <p class="text-xs text-slate-400">uygulama.gtb.gov.tr/Tara üzerinden yasal notlar doğrulanıyor.</p>
+                </div>
+
+                <!-- Hata Durumu -->
+                <div x-show="!modalYukleniyor && modalHata" class="bg-rose-50 border border-rose-200 p-4 rounded-xl text-rose-800 space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-sm">
+                        <i class="fa-solid fa-circle-exclamation text-rose-600"></i>
+                        <span>İzahname Alınamadı</span>
+                    </div>
+                    <p class="text-xs" x-text="modalHata"></p>
+                </div>
+
+                <!-- Başarılı İzahname Kayıtları (Bölüm, Fasıl, Pozisyon) -->
+                <div x-show="!modalYukleniyor && modalKayitlar.length > 0" class="space-y-6">
+                    <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-900 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-blue-600"></i>
+                            <span>Bu metin T.C. Ticaret Bakanlığı Gümrükler Genel Müdürlüğü resmi Tarife Arama Motoru (TARA) veri tabanından canlı alınmıştır.</span>
+                        </div>
+                        <a :href="'https://uygulama.gtb.gov.tr/Tara/'" target="_blank" rel="noopener" class="text-blue-700 font-bold hover:underline shrink-0">
+                            Resmi Portal <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+
+                    <template x-for="(kayit, kIndex) in modalKayitlar" :key="kIndex">
+                        <div class="border border-slate-200 rounded-xl p-5 bg-white space-y-3 shadow-sm">
+                            <div class="border-b border-slate-150 pb-2 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                                <h3 class="font-extrabold text-slate-900 text-sm sm:text-base uppercase tracking-tight" x-text="kayit.Baslik"></h3>
+                            </div>
+
+                            <!-- Resmi Açıklama / İzahname HTML İçeriği -->
+                            <div class="tara-content text-slate-700 text-xs sm:text-sm leading-relaxed overflow-x-auto" x-html="kayit.Aciklama"></div>
+
+                            <!-- Not / İlave Açıklama -->
+                            <div x-show="kayit.Not" class="bg-slate-50 border-l-4 border-blue-500 p-3 rounded text-xs text-slate-600">
+                                <strong class="text-slate-800">Önemli Not:</strong>
+                                <span x-text="kayit.Not"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Modal Alt Bilgi Butonları -->
+            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                <span>Quantum AI Gümrük Müşavirliği Ltd. Şti. | BİLGE EDI Entegrasyonu</span>
+                <button @click="modalAcik = false" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-bold transition">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER (AÇIK TEMA) -->
+    <footer class="bg-white border-t border-slate-200 text-slate-600 mt-16 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                
+                <!-- Sütun 1: Kurumsal -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5">
+                        <img src="./uploads/musavirlik/x-logo-png.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'">
+                        <span class="font-extrabold text-sm text-slate-900">Quantum AI Gümrük Müşavirliği</span>
+                    </div>
+                    <p class="text-slate-500 leading-relaxed">
+                        T.C. Ticaret Bakanlığı BİLGE v3 EDI sistemine doğrudan bağlı lisanslı gümrük müşavirliği ve tarife danışmanlığı.
+                    </p>
+                </div>
+
+                <!-- Sütun 2: Hızlı Bağlantılar -->
+                <div class="space-y-2">
+                    <span class="font-bold text-slate-900 block">Sayfalar</span>
+                    <ul class="space-y-1.5">
+                        <li><a href="index.html" class="hover:text-blue-600 transition">Ana Sayfa</a></li>
+                        <li><a href="gtip.html" class="hover:text-blue-600 font-bold text-blue-600 transition">GTİP Tarife Arama</a></li>
+                        <li><a href="index.html#hizmetler" class="hover:text-blue-600 transition">Hizmetlerimiz</a></li>
+                        <li><a href="index.html#faydali-linkler" class="hover:text-blue-600 transition">Faydalı Linkler & Incoterms</a></li>
+                        <li><a href="javascript:void(0)" onclick="tgOpenModal('Genel İletişim & Danışmanlık')" class="hover:text-blue-600 transition">İletişim</a></li>
+                    </ul>
+                </div>
+
+                <!-- Sütun 3: Resmi Kaynaklar -->
+                <div class="space-y-2">
+                    <span class="font-bold text-slate-900 block">Resmi Sistemler</span>
+                    <ul class="space-y-1.5">
+                        <li><a href="https://uygulama.gtb.gov.tr/Tara/" target="_blank" rel="noopener" class="hover:text-blue-600 transition">Ticaret Bakanlığı TARA</a></li>
+                        <li><a href="https://ticaret.gov.tr" target="_blank" rel="noopener" class="hover:text-blue-600 transition">T.C. Ticaret Bakanlığı</a></li>
+                        <li><a href="https://www.resmigazete.gov.tr" target="_blank" rel="noopener" class="hover:text-blue-600 transition">T.C. Resmî Gazete</a></li>
+                        <li><a href="https://www.igmd.org.tr" target="_blank" rel="noopener" class="hover:text-blue-600 transition">İstanbul Gümrük Müşavirleri Derneği</a></li>
+                    </ul>
+                </div>
+
+                <!-- Sütun 4: İletişim -->
+                <div class="space-y-2">
+                    <span class="font-bold text-slate-900 block">Genel Merkez</span>
+                    <p class="text-slate-500 leading-relaxed">Sinan Keskin Danışmanlık ve Gümrükleme Hizmetleri, Kadıköy / İstanbul</p>
+                    <p class="font-semibold text-slate-800">+90 (535) 835 61 77</p>
+                    <p class="text-blue-600">info@sinankeskin.com.tr</p>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 font-medium">
+                <span>© 2026 Quantum AI Gümrük Müşavirliği Ltd. Şti. Tüm Hakları Saklıdır.</span>
+                <span>Bu site <a href="https://sinankeskin.com.tr" target="_blank" rel="noopener noreferrer" class="font-bold text-blue-600 hover:underline">Sinan Keskin</a> tarafından yapılmıştır.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ALPINE.JS UYGULAMA MOTORU -->
+    <script>
+        function gtipApp() {
+            return {
+                restUrl: window.gumrukConfig ? window.gumrukConfig.restUrl : '/wp-jsonindex.htmlv1/',
+                mobilMenu: false,
+                aktifTab: 'arama', // 'arama' veya 'hesaplayici'
+                aktifSekme: 'arama', // 'arama', 'agac' veya 'tara_canli'
+                aramaTipi: 'kelime', // 'kelime' veya 'gtip'
+                sorgu: '',
+                seciliFasil: '',
+                yukleniyor: false,
+                sonuclar: [],
+                toplamSonuc: 0,
+                bolumler: [],
+                fasillar: {},
+                bolumAcik: { 'I': true },
+                kopyalandiGtip: null,
+
+                // İthalat Maliyet & Vergi Simülatörü Durumu
+                calc: {
+                    urunAdi: 'Taşınabilir Bilgisayar (Laptop)',
+                    gtipKodu: '8471.30.00.00.00',
+                    mense: 'diger',
+                    paraBirimi: 'USD',
+                    fobBedeli: 20000,
+                    navlun: 1500,
+                    sigorta: 300,
+                    dovizKuru: 38.50,
+                    gumrukVergisiOran: 0,
+                    igvOran: 0,
+                    otvOran: 0,
+                    kdvOran: 20,
+                    damgaVergisi: 875,
+                    ardiyeMasraf: 3500,
+                    kopyalandi: false
+                },
+
+                // Modal Durumu
+                modalAcik: false,
+                modalYukleniyor: false,
+                modalGtip: '',
+                modalBaslik: '',
+                modalKayitlar: [],
+                modalHata: null,
+
+                init() {
+                    this.bolumleriGetir();
+                    this.ara();
+                },
+
+                async bolumleriGetir() {
+                    try {
+                        const res = await fetch(this.restUrl + 'gtip-bolumler');
+                        const data = await res.json();
+                        if (data && data.success) {
+                            this.bolumler = data.bolumler || [];
+                            this.fasillar = data.fasillar || {};
+                        }
+                    } catch (e) {
+                        console.error('Bölümler yüklenirken hata:', e);
+                    }
+                },
+
+                async ara() {
+                    this.yukleniyor = true;
+                    try {
+                        const params = new URLSearchParams({
+                            q: this.sorgu,
+                            tip: this.aramaTipi,
+                            fasil: this.seciliFasil
+                        });
+
+                        const res = await fetch(this.restUrl + 'gtip-ara?' + params.toString());
+                        const data = await res.json();
+                        if (data && data.success) {
+                            this.sonuclar = data.data || [];
+                            this.toplamSonuc = data.toplam || 0;
+                        } else {
+                            this.sonuclar = [];
+                            this.toplamSonuc = 0;
+                        }
+                    } catch (e) {
+                        console.error('Arama hatası:', e);
+                        this.sonuclar = [];
+                        this.toplamSonuc = 0;
+                    } finally {
+                        this.yukleniyor = false;
+                    }
+                },
+
+                hizliArama(metin, tip) {
+                    this.sorgu = metin;
+                    this.aramaTipi = tip;
+                    this.seciliFasil = '';
+                    this.aktifSekme = 'arama';
+                    this.ara();
+                },
+
+                fasilSec(fasilKodu) {
+                    this.seciliFasil = fasilKodu;
+                    this.sorgu = '';
+                    this.aktifSekme = 'arama';
+                    this.ara();
+                },
+
+                async izahnameAc(gtip, tanim) {
+                    this.modalGtip = gtip;
+                    this.modalBaslik = tanim;
+                    this.modalAcik = true;
+                    this.modalYukleniyor = true;
+                    this.modalHata = null;
+                    this.modalKayitlar = [];
+
+                    try {
+                        const res = await fetch(this.restUrl + 'gtip-izahname', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ kod: gtip })
+                        });
+                        const data = await res.json();
+
+                        if (data && data.success && data.kayitlar && data.kayitlar.length > 0) {
+                            // Aranan terimi işaretle
+                            const searchWord = this.sorgu.trim();
+                            if (searchWord && searchWord.length >= 2) {
+                                const regex = new RegExp('(' + searchWord + ')', 'gi');
+                                data.kayitlar.forEach(item => {
+                                    if (item.Aciklama) {
+                                        item.Aciklama = item.Aciklama.replace(regex, '<span class="mark">$1</span>');
+                                    }
+                                });
+                            }
+                            this.modalKayitlar = data.kayitlar;
+                        } else {
+                            this.modalHata = data.message || 'Bu pozisyona ait resmi izahname kaydı bulunamadı.';
+                        }
+                    } catch (e) {
+                        this.modalHata = 'Bakanlık TARA sunucusuyla iletişim kurulurken bir ağ hatası oluştu.';
+                    } finally {
+                        this.modalYukleniyor = false;
+                    }
+                },
+
+                kopyala(text) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        this.kopyalandiGtip = text;
+                        setTimeout(() => {
+                            this.kopyalandiGtip = null;
+                        }, 2000);
+                    });
+                },
+
+                yazdir() {
+                    const printContents = document.getElementById('tara-izahname-print').innerHTML;
+                    const originalContents = document.body.innerHTML;
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(`
+                        <html>
+                        <head>
+                            <title>Resmi İzahname - ${this.modalGtip}</title>
+                            <style>
+                                body { font-family: sans-serif; padding: 20px; color: #1e293b; line-height: 1.6; }
+                                h1, h2, h3 { color: #0f172a; }
+                                .mark { background-color: #fef08a; padding: 2px 4px; font-weight: bold; }
+                            </style>
+                        </head>
+                        <body>
+                            <h2>T.C. Ticaret Bakanlığı Resmi İzahname - ${this.modalGtip}</h2>
+                            <h3>${this.modalBaslik}</h3>
+                            <hr/>
+                            ${printContents}
+                        </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                },
+
+                // İTHALAT HESAPLAMA MOTORU METODLARI
+                cifDoviz() {
+                    return (parseFloat(this.calc.fobBedeli) || 0) + (parseFloat(this.calc.navlun) || 0) + (parseFloat(this.calc.sigorta) || 0);
+                },
+                cifTL() {
+                    return this.cifDoviz() * (parseFloat(this.calc.dovizKuru) || 1);
+                },
+                gvTutari() {
+                    return this.cifTL() * ((parseFloat(this.calc.gumrukVergisiOran) || 0) / 100);
+                },
+                igvTutari() {
+                    return this.cifTL() * ((parseFloat(this.calc.igvOran) || 0) / 100);
+                },
+                otvMatrahi() {
+                    return this.cifTL() + this.gvTutari() + this.igvTutari();
+                },
+                otvTutari() {
+                    return this.otvMatrahi() * ((parseFloat(this.calc.otvOran) || 0) / 100);
+                },
+                kdvMatrahi() {
+                    return this.cifTL() + this.gvTutari() + this.igvTutari() + this.otvTutari() + (parseFloat(this.calc.ardiyeMasraf) || 0);
+                },
+                kdvTutari() {
+                    return this.kdvMatrahi() * ((parseFloat(this.calc.kdvOran) || 0) / 100);
+                },
+                toplamVergi() {
+                    return this.gvTutari() + this.igvTutari() + this.otvTutari() + this.kdvTutari() + (parseFloat(this.calc.damgaVergisi) || 0);
+                },
+                genelToplamMaliyet() {
+                    return this.cifTL() + this.toplamVergi() + (parseFloat(this.calc.ardiyeMasraf) || 0);
+                },
+                efektifVergiOrani() {
+                    const cif = this.cifTL();
+                    if (!cif) return '0.0';
+                    return ((this.toplamVergi() / cif) * 100).toFixed(1);
+                },
+                formatTL(tutar) {
+                    return (parseFloat(tutar) || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
+                },
+                formatDoviz(tutar) {
+                    return (parseFloat(tutar) || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + this.calc.paraBirimi;
+                },
+                kurGuncelle() {
+                    if (this.calc.paraBirimi === 'USD') this.calc.dovizKuru = 38.50;
+                    else if (this.calc.paraBirimi === 'EUR') this.calc.dovizKuru = 41.20;
+                    else if (this.calc.paraBirimi === 'GBP') this.calc.dovizKuru = 48.90;
+                    else if (this.calc.paraBirimi === 'TRY') this.calc.dovizKuru = 1.00;
+                },
+                menseDegisti() {
+                    if (this.calc.mense === 'ab_atr') {
+                        this.calc.gumrukVergisiOran = 0;
+                        this.calc.igvOran = 0;
+                    } else if (this.calc.mense === 'uzakdogu') {
+                        if (this.calc.gumrukVergisiOran === 0) this.calc.gumrukVergisiOran = 6.5;
+                        this.calc.igvOran = 15;
+                    }
+                },
+                senaryoYukle(tip) {
+                    if (tip === 'bilgisayar') {
+                        this.calc.urunAdi = 'Taşınabilir Bilgisayar (Laptop)';
+                        this.calc.gtipKodu = '8471.30.00.00.00';
+                        this.calc.mense = 'diger';
+                        this.calc.paraBirimi = 'USD';
+                        this.calc.dovizKuru = 38.50;
+                        this.calc.fobBedeli = 25000;
+                        this.calc.navlun = 1800;
+                        this.calc.sigorta = 350;
+                        this.calc.gumrukVergisiOran = 0;
+                        this.calc.igvOran = 0;
+                        this.calc.otvOran = 0;
+                        this.calc.kdvOran = 20;
+                        this.calc.damgaVergisi = 875;
+                        this.calc.ardiyeMasraf = 3500;
+                    } else if (tip === 'tekstil') {
+                        this.calc.urunAdi = 'Pamuklu Erkek Tişört';
+                        this.calc.gtipKodu = '6109.10.00.00.11';
+                        this.calc.mense = 'uzakdogu';
+                        this.calc.paraBirimi = 'USD';
+                        this.calc.dovizKuru = 38.50;
+                        this.calc.fobBedeli = 18000;
+                        this.calc.navlun = 2200;
+                        this.calc.sigorta = 300;
+                        this.calc.gumrukVergisiOran = 12;
+                        this.calc.igvOran = 17;
+                        this.calc.otvOran = 0;
+                        this.calc.kdvOran = 10;
+                        this.calc.damgaVergisi = 875;
+                        this.calc.ardiyeMasraf = 4200;
+                    } else if (tip === 'arac') {
+                        this.calc.urunAdi = 'Binek Otomobil (1600cc altı benzinli)';
+                        this.calc.gtipKodu = '8703.22.10.00.00';
+                        this.calc.mense = 'ab_atr';
+                        this.calc.paraBirimi = 'EUR';
+                        this.calc.dovizKuru = 41.20;
+                        this.calc.fobBedeli = 32000;
+                        this.calc.navlun = 1500;
+                        this.calc.sigorta = 600;
+                        this.calc.gumrukVergisiOran = 0;
+                        this.calc.igvOran = 0;
+                        this.calc.otvOran = 80;
+                        this.calc.kdvOran = 20;
+                        this.calc.damgaVergisi = 875;
+                        this.calc.ardiyeMasraf = 6500;
+                    }
+                },
+                hesaplayiciyaAktar(item) {
+                    this.calc.gtipKodu = item.gtip || '';
+                    this.calc.urunAdi = item.tanim || 'Eşya';
+                    
+                    const parseOran = (metin) => {
+                        if (!metin) return 0;
+                        const match = metin.toString().match(/(\d+(\.\d+)?)/);
+                        return match ? parseFloat(match[0]) : 0;
+                    };
+
+                    this.calc.gumrukVergisiOran = parseOran(item.gumruk_vergisi);
+                    this.calc.igvOran = parseOran(item.igv);
+                    this.calc.otvOran = parseOran(item.otv);
+                    
+                    const kdvVal = parseOran(item.kdv);
+                    this.calc.kdvOran = kdvVal > 0 ? kdvVal : 20;
+
+                    this.aktifTab = 'hesaplayici';
+                    window.scrollTo({ top: 350, behavior: 'smooth' });
+                },
+                raporKopyala() {
+                    const metin = `*X GÜMRÜK MÜŞAVİRLİĞİ - İTHALAT MALİYET RAPORU*
+--------------------------------------------------
+GTİP Kodu: ${this.calc.gtipKodu}
+Eşya Tanımı: ${this.calc.urunAdi}
+Menşe Ülke: ${this.calc.mense.toUpperCase()}
+Mal Bedeli (FOB): ${this.calc.fobBedeli.toLocaleString('tr-TR')} ${this.calc.paraBirimi}
+Navlun + Sigorta: ${(this.calc.navlun + this.calc.sigorta).toLocaleString('tr-TR')} ${this.calc.paraBirimi}
+Döviz Kuru: ${this.calc.dovizKuru} ₺
+
+*GÜMRÜK KIYMETİ & VERGİ DETAYLARI*
+CIF Matrahı (Gümrük Kıymeti): ${this.formatTL(this.cifTL())}
+- Gümrük Vergisi (%${this.calc.gumrukVergisiOran}): ${this.formatTL(this.gvTutari())}
+- İlave Gümrük Vergisi (%${this.calc.igvOran}): ${this.formatTL(this.igvTutari())}
+- ÖTV Matrahı: ${this.formatTL(this.otvMatrahi())} | ÖTV Tutarı (%${this.calc.otvOran}): ${this.formatTL(this.otvTutari())}
+- KDV Matrahı: ${this.formatTL(this.kdvMatrahi())} | KDV Tutarı (%${this.calc.kdvOran}): ${this.formatTL(this.kdvTutari())}
+- Damga Vergisi: ${this.formatTL(this.calc.damgaVergisi)}
+- Ardiye & Lokal Masraflar: ${this.formatTL(this.calc.ardiyeMasraf)}
+--------------------------------------------------
+*TOPLAM GÜMRÜK VERGİLERİ:* ${this.formatTL(this.toplamVergi())}
+*TOPLAM İTHALAT MALİYETİ:* ${this.formatTL(this.genelToplamMaliyet())}
+*Efektif Vergi Yükü:* %${this.efektifVergiOrani()}
+--------------------------------------------------
+Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük Müşavirliği`;
+
+                    navigator.clipboard.writeText(metin).then(() => {
+                        this.calc.kopyalandi = true;
+                        setTimeout(() => { this.calc.kopyalandi = false; }, 2500);
+                    });
+                },
+                danismanaSor() {
+                    const mesaj = `${this.calc.gtipKodu} (${this.calc.urunAdi}) ithalatı yapmayı planlıyorum. CIF tutarı ${this.formatDoviz(this.cifDoviz())} (${this.formatTL(this.cifTL())}). Vergi oranları: GV %${this.calc.gumrukVergisiOran}, İGV %${this.calc.igvOran}, ÖTV %${this.calc.otvOran}, KDV %${this.calc.kdvOran}. Bu eşyanın ithalatında TAREKS, TSE, Kayıt Belgesi veya İthalat İzni gerekiyor mu? Mevzuat önerileriniz ve dikkat etmem gereken hususlar nelerdir?`;
+                    window.dispatchEvent(new CustomEvent('gumruk-ai-soru', { detail: { soru: mesaj } }));
+                }
+            };
+        }
+    </script>
+
+    <!-- CANLI GÜMRÜK DANIŞMANI AI & BAŞ MÜŞAVİR CHAT WIDGET -->
+    <!-- CANLI GÜMRÜK DANIŞMANI AI WIDGET -->
+<div x-data="aiChatWidget()" x-init="initWidget()" class="fixed bottom-12 sm:bottom-14 right-3 sm:right-5 z-50 font-sans" x-cloak>
+
+    <!-- MİNİMİZE HALİ: YÜZEN BUTON VE YANINDAKİ BAŞA DÖN BUTONU (YATAY EKSENDE BİREBİR ORTALI) -->
+    <div x-show="!sohbetAcik" class="flex items-center gap-2 sm:gap-3" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
+        
+        <!-- YATAY EKSENDE MÜŞAVİR AI İLE TAM ORTALANMIŞ BAŞA DÖN BUTONU -->
+        <button 
+            id="tg-floating-scroll-top"
+            type="button"
+            onclick="if(window.tgScrollToFrame){window.tgScrollToFrame(1)}else if(window.xgPortalScrollToFrame){window.xgPortalScrollToFrame(1)}else{window.scrollTo({top:0,behavior:'smooth'})}" 
+            title="Başa Dön" 
+            class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-blue-600 text-slate-700 hover:text-white shadow-xl border border-slate-200/90 flex items-center justify-center transition-all duration-300 opacity-0 pointer-events-none scale-90 cursor-pointer group shrink-0">
+            <i class="fa-solid fa-arrow-up text-xs sm:text-sm group-hover:-translate-y-0.5 transition-transform duration-200"></i>
+        </button>
+
+        <button 
+            type="button"
+            @click="sohbetAc()" 
+            class="group relative flex items-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-2.5 sm:py-3.5 bg-white hover:bg-slate-50 border-2 border-blue-600 rounded-full shadow-2xl transition-all duration-300 hover:shadow-blue-500/25 hover:-translate-y-0.5 cursor-pointer">
+            
+            <!-- Canlı Nabız Göstergesi -->
+            <span class="relative flex h-3 w-3 sm:h-3.5 sm:w-3.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-emerald-500"></span>
+            </span>
+
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-md shrink-0">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div class="text-left">
+                    <span class="block text-xs font-extrabold text-slate-900 leading-tight">Müşavir AI</span>
+                    <span class="hidden sm:block text-[10px] text-blue-600 font-semibold">Gümrük Danışmanı</span>
+                </div>
+            </div>
+
+            <!-- Bildirim Rozeti -->
+            <span x-show="okunmamisSayisi > 0" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg animate-bounce" x-text="okunmamisSayisi"></span>
+        </button>
+    </div>
+
+    <!-- AÇIK HALİ: CANLI SOHBET PENCERESİ (AÇIK TEMA) -->
+    <div 
+        x-show="sohbetAcik" 
+        style="display: none;"
+        x-transition:enter="transition ease-out duration-300" 
+        x-transition:enter-start="opacity-0 translate-y-8 scale-95" 
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-y-8 scale-95"
+        class="w-[94vw] sm:w-[420px] h-[520px] max-h-[82vh] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+        
+        <!-- PENCERE ÜST ŞERİDİ (HEADER) -->
+        <div class="px-5 py-4 bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 text-white flex items-center justify-between shrink-0 shadow-md">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center text-lg text-white font-bold shadow-inner">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-blue-900 bg-emerald-400"></span>
+                </div>
+
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h3 class="font-extrabold text-sm leading-tight tracking-tight text-white">Baş Gümrük Müşaviri</h3>
+                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-blue-500/40 text-blue-100 border border-blue-400/30">AI</span>
+                    </div>
+                    <div class="text-[11px] text-blue-200 flex items-center gap-1.5 mt-0.5">
+                        <span x-text="oturumDurumu === 'yonetici_devraldi' ? '👤 Gümrük Müşaviri Yetkilisi Yayında' : '● Canlı Mevzuat Danışmanı'"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1">
+                <button 
+                    type="button"
+                    @click="temizleSohbet()" 
+                    class="p-2 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition text-xs cursor-pointer" 
+                    title="Sohbeti Sıfırla">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+                <button 
+                    type="button"
+                    @click="sohbetKapat()" 
+                    class="p-2 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer" 
+                    title="Kapat">
+                    <i class="fa-solid fa-chevron-down text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SOHBET MESAJ AKIŞ ALANI -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50 text-xs text-slate-800" id="chat-stream-box">
+            
+            <!-- Karşılama Mesajı -->
+            <div class="flex justify-start">
+                <div class="max-w-[85%] bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3.5 shadow-sm space-y-2">
+                    <div class="flex items-center gap-1.5 font-bold text-[11px] text-blue-700">
+                        <i class="fa-solid fa-shield-halved text-blue-600"></i>
+                        <span>Quantum AI Gümrük Müşavirliği</span>
+                    </div>
+                    <p class="leading-relaxed text-slate-700">
+                        Merhaba! Ben <strong>Quantum AI Gümrük Müşavirliği</strong> Kıdemli Baş Gümrük Müşaviriyim. 4458 sayılı Türk Gümrük Kanunu, 12 haneli GTİP tespiti, gümrük vergileri (G.V., KDV, ÖTV, İGV), TAREKS denetimleri ve antrepo süreçlerinizde size yardımcı olmaktan memnuniyet duyarım.
+                    </p>
+                    <p class="text-[11px] text-slate-500 italic">
+                        Bize ürününüzün adını veya sormak istediğiniz gümrük prosedürünü yazabilirsiniz.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Örnek Hızlı Sorular -->
+            <div x-show="mesajlar.length === 0" class="space-y-1.5 pt-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Örnek Danışma Soruları:</span>
+                <div class="grid grid-cols-2 gap-1.5">
+                    <button 
+                        type="button"
+                        @click="hizliSoru('GTİP tespiti ve tarife bağlama süreci nasıl işler?')" 
+                        class="text-left p-2 rounded-xl bg-white border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 transition text-[11px] font-medium shadow-2xs">
+                        📑 GTİP tespiti nasıl yapılır?
+                    </button>
+                    <button 
+                        type="button"
+                        @click="hizliSoru('Otomobil ithalatında ÖTV ve Gümrük Vergisi oranları nedir?')" 
+                        class="text-left p-2 rounded-xl bg-white border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 transition text-[11px] font-medium shadow-2xs">
+                        🚗 Otomobil ithalat vergileri
+                    </button>
+                    <button 
+                        type="button"
+                        @click="hizliSoru('TAREKS ve CE uygunluk denetimi hangi ürünlerde zorunludur?')" 
+                        class="text-left p-2 rounded-xl bg-white border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 transition text-[11px] font-medium shadow-2xs">
+                        🛡️ TAREKS & CE denetimi
+                    </button>
+                    <button 
+                        type="button"
+                        @click="hizliSoru('A.TR ve Menşe Şahadetnamesi vergi muafiyeti sağlar mı?')" 
+                        class="text-left p-2 rounded-xl bg-white border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 transition text-[11px] font-medium shadow-2xs">
+                        🇪🇺 A.TR belgesi muafiyeti
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dinamik Mesajlar -->
+            <template x-for="(msg, i) in mesajlar" :key="i">
+                <div :class="msg.gonderen === 'kullanici' ? 'flex justify-end' : 'flex justify-start'">
+                    <div 
+                        :class="msg.gonderen === 'kullanici' 
+                            ? 'max-w-[85%] bg-blue-600 text-white rounded-2xl rounded-tr-none p-3 shadow-md' 
+                            : (msg.gonderen === 'yonetici' 
+                                ? 'max-w-[85%] bg-amber-50 text-amber-950 border border-amber-200 rounded-2xl rounded-tl-none p-3 shadow-sm' 
+                                : 'max-w-[85%] bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-none p-3.5 shadow-sm')">
+                        
+                        <!-- Gönderen Bilgisi -->
+                        <div class="flex items-center justify-between gap-2 mb-1 text-[10px] opacity-80" :class="msg.gonderen === 'kullanici' ? 'text-blue-100' : 'text-slate-500'">
+                            <span class="font-bold" x-text="msg.gonderen === 'kullanici' ? 'Siz' : (msg.gonderen === 'yonetici' ? 'Gümrük Müşaviri Yetkilisi' : 'Baş Gümrük Müşaviri AI')"></span>
+                            <span x-text="msg.zaman"></span>
+                        </div>
+
+                        <!-- Mesaj Metni -->
+                        <div class="leading-relaxed whitespace-pre-line text-xs font-normal" x-html="msg.mesaj"></div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- AI Düşünüyor / Yazıyor Animasyonu -->
+            <div x-show="yaziyor" class="flex justify-start">
+                <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3 shadow-sm flex items-center gap-2">
+                    <span class="text-[11px] text-slate-500 font-medium">Gümrük mevzuatı taranıyor</span>
+                    <div class="flex gap-1 items-center">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:0.15s]"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:0.3s]"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ALT METİN GİRİŞ FORMU -->
+        <div class="p-3 bg-white border-t border-slate-200 shrink-0 space-y-2">
+            <form @submit.prevent="mesajGonder()" class="flex items-center gap-2">
+                <input 
+                    type="text" 
+                    x-model="girdiMesaj" 
+                    placeholder="Gümrük sorunuzu yazınız (Örn: Çin'den telefon ithali...)" 
+                    class="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white transition"
+                    :disabled="yaziyor">
+                <button 
+                    type="submit" 
+                    :disabled="yaziyor || !girdiMesaj.trim()"
+                    class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white flex items-center justify-center transition shadow-md shadow-blue-600/30 shrink-0 cursor-pointer">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+
+            <div class="flex items-center justify-between text-[10px] text-slate-400 px-1">
+                <span>Quantum AI Gümrük Müşavirliği Ltd. Şti.</span>
+                <span>Tel: +90 (535) 835 61 77</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- SOHBET SCRIPTI -->
+<script>
+    function aiChatWidget() {
+        return {
+            sohbetAcik: false,
+            yaziyor: false,
+            girdiMesaj: '',
+            mesajlar: [],
+            sessionId: '',
+            oturumDurumu: 'ai_aktif',
+            okunmamisSayisi: 0,
+            pollTimer: null,
+            restUrl: (window.tgConfig && window.tgConfig.apiUrl) || 
+                     (window.gumrukConfig && (window.gumrukConfig.restUrl || window.gumrukConfig.apiUrl)) || 
+                     './api/gumruk/v1/',
+
+            initWidget() {
+                this.sohbetAcik = false;
+                // Persistent Session ID
+                let sid = localStorage.getItem('x_chat_session');
+                if (!sid) {
+                    sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+                    localStorage.setItem('x_chat_session', sid);
+                }
+                this.sessionId = sid;
+                this.gecmisGetir();
+
+                // 4 saniyede bir yeni mesaj kontrolü
+                this.pollTimer = setInterval(() => {
+                    if (this.sohbetAcik) {
+                        this.gecmisGetir(true);
+                    }
+                }, 4000);
+
+                // Dışarıdan tetikleyici dinleme
+                window.addEventListener('gumruk-ai-soru', (e) => {
+                    if (e.detail && e.detail.soru) {
+                        this.sohbetAc();
+                        this.hizliSoru(e.detail.soru);
+                    }
+                });
+
+                // Standart sayfalarda (Frame akışı olmayan sayfalarda) başa dön butonunu yönet
+                window.addEventListener('scroll', () => {
+                    if (!window.tgScrollToFrame && !window.xgPortalScrollToFrame) {
+                        const floatTopBtn = document.getElementById('tg-floating-scroll-top');
+                        if (floatTopBtn) {
+                            if (window.scrollY > 300) {
+                                floatTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+                                floatTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+                            } else {
+                                floatTopBtn.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+                                floatTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        }
+                    }
+                }, { passive: true });
+            },
+
+            sohbetAc() {
+                this.sohbetAcik = true;
+                this.okunmamisSayisi = 0;
+                this.$nextTick(() => {
+                    this.kaydirAsagi();
+                });
+            },
+
+            sohbetKapat() {
+                this.sohbetAcik = false;
+            },
+
+            kaydirAsagi() {
+                const box = document.getElementById('chat-stream-box');
+                if (box) box.scrollTop = box.scrollHeight;
+            },
+
+            async gecmisGetir(sessiz = false) {
+                try {
+                    const res = await fetch(this.restUrl + 'chat/gecmis?session_id=' + encodeURIComponent(this.sessionId));
+                    const data = await res.json();
+                    if (data && data.success) {
+                        this.oturumDurumu = data.durum || 'ai_aktif';
+                        const oncekiUzunluk = this.mesajlar.length;
+                        this.mesajlar = (data.mesajlar || []).map(m => ({
+                            id: m.id,
+                            gonderen: m.gonderen,
+                            mesaj: m.mesaj,
+                            zaman: m.created_at ? m.created_at.substring(11, 16) : ''
+                        }));
+
+                        if (this.mesajlar.length > oncekiUzunluk && this.sohbetAcik) {
+                            this.$nextTick(() => this.kaydirAsagi());
+                        } else if (this.mesajlar.length > oncekiUzunluk && !this.sohbetAcik) {
+                            this.okunmamisSayisi += (this.mesajlar.length - oncekiUzunluk);
+                        }
+                    }
+                } catch (e) {
+                    if (!sessiz) console.error('Chat geçmişi alınamadı:', e);
+                }
+            },
+
+            async mesajGonder() {
+                const text = this.girdiMesaj.trim();
+                if (!text || this.yaziyor) return;
+
+                const zaman = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                this.mesajlar.push({
+                    gonderen: 'kullanici',
+                    mesaj: text,
+                    zaman: zaman
+                });
+                this.girdiMesaj = '';
+                this.yaziyor = true;
+                this.$nextTick(() => this.kaydirAsagi());
+
+                try {
+                    const res = await fetch(this.restUrl + 'chat/mesaj-gonder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            session_id: this.sessionId,
+                            mesaj: text,
+                            ziyaretci_adi: 'Web Ziyaretçisi'
+                        })
+                    });
+
+                    const data = await res.json();
+                    if (data && data.success) {
+                        if (data.ai_yanit) {
+                            this.mesajlar.push({
+                                gonderen: 'ai',
+                                mesaj: data.ai_yanit,
+                                zaman: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                            });
+                        } else if (data.bildirim) {
+                            this.mesajlar.push({
+                                gonderen: 'yonetici',
+                                mesaj: data.bildirim,
+                                zaman: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                            });
+                        }
+                        this.oturumDurumu = data.durum;
+                    }
+                } catch (e) {
+                    this.mesajlar.push({
+                        gonderen: 'ai',
+                        mesaj: 'Bağlantı sırasında bir aksaklık oluştu. Lütfen sorunuzu tekrar iletiniz veya operasyon hattımızı arayınız: +90 (535) 835 61 77',
+                        zaman: ''
+                    });
+                } finally {
+                    this.yaziyor = false;
+                    this.$nextTick(() => this.kaydirAsagi());
+                }
+            },
+
+            hizliSoru(soru) {
+                this.girdiMesaj = soru;
+                this.mesajGonder();
+            },
+
+            temizleSohbet() {
+                if (confirm('Sohbet geçmişinizi sıfırlamak istiyor musunuz?')) {
+                    localStorage.removeItem('x_chat_session');
+                    this.sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+                    localStorage.setItem('x_chat_session', this.sessionId);
+                    this.mesajlar = [];
+                    this.oturumDurumu = 'ai_aktif';
+                }
+            }
+        };
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+</body>
+</html>
+
