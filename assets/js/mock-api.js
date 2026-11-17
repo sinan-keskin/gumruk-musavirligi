@@ -796,14 +796,44 @@
                 return jsonResp({ success: true, message: 'SMTP Test E-postası başarıyla gönderildi.' });
             }
 
-            // D) Chat Uç Noktaları
+            // D) Chat Uç Noktaları (Kalıcı Oturum ve Geçmiş Yönetimi)
+            const chatSid = searchParams.get('session_id') || requestBody.session_id || 'default_session';
+
+            function getChatSessionMessages(sid) {
+                try {
+                    const allSessions = JSON.parse(localStorage.getItem('x_mock_chat_sessions') || '{}');
+                    return allSessions[sid] || [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function appendChatSessionMessage(sid, gonderen, icerik) {
+                try {
+                    const allSessions = JSON.parse(localStorage.getItem('x_mock_chat_sessions') || '{}');
+                    if (!allSessions[sid]) allSessions[sid] = [];
+                    allSessions[sid].push({
+                        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                        gonderen: gonderen,
+                        mesaj: icerik,
+                        created_at: new Date().toISOString()
+                    });
+                    localStorage.setItem('x_mock_chat_sessions', JSON.stringify(allSessions));
+                } catch (e) {}
+            }
+
             if (cleanUrl.endsWith('chat/gecmis') || cleanUrl.endsWith('yonetim/chat/mesajlar')) {
-                return jsonResp({ success: true, data: [], mesajlar: [] });
+                const history = getChatSessionMessages(chatSid);
+                return jsonResp({ success: true, durum: 'ai_aktif', data: history, mesajlar: history });
             }
 
             if (cleanUrl.endsWith('chat/mesaj') || cleanUrl.endsWith('chat/mesaj-gonder') || cleanUrl.endsWith('chat/sor') || cleanUrl.endsWith('yonetim/chat/yanit-ver')) {
                 const q = requestBody.mesaj || requestBody.soru || '';
+                if (q) appendChatSessionMessage(chatSid, 'kullanici', q);
+
                 const aiCevap = await window.gumrukApi.askAi(q);
+                if (aiCevap) appendChatSessionMessage(chatSid, 'ai', aiCevap);
+
                 return jsonResp({
                     success: true,
                     ai_yanit: aiCevap,

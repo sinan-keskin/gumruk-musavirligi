@@ -1765,20 +1765,24 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
                 try {
                     const res = await fetch(this.restUrl + 'chat/gecmis?session_id=' + encodeURIComponent(this.sessionId));
                     const data = await res.json();
-                    if (data && data.success) {
+                    if (data && data.success && Array.isArray(data.mesajlar)) {
                         this.oturumDurumu = data.durum || 'ai_aktif';
-                        const oncekiUzunluk = this.mesajlar.length;
-                        this.mesajlar = (data.mesajlar || []).map(m => ({
-                            id: m.id,
-                            gonderen: m.gonderen,
-                            mesaj: this.formatMarkdown(m.mesaj),
-                            zaman: m.created_at ? m.created_at.substring(11, 16) : ''
-                        }));
-
-                        if (this.mesajlar.length > oncekiUzunluk && this.sohbetAcik) {
-                            this.$nextTick(() => this.kaydirAsagi());
-                        } else if (this.mesajlar.length > oncekiUzunluk && !this.sohbetAcik) {
-                            this.okunmamisSayisi += (this.mesajlar.length - oncekiUzunluk);
+                        if (data.mesajlar.length > 0) {
+                            const formatted = data.mesajlar.map(m => ({
+                                id: m.id,
+                                gonderen: m.gonderen,
+                                mesaj: this.formatMarkdown(m.mesaj),
+                                zaman: m.created_at ? m.created_at.substring(11, 16) : ''
+                            }));
+                            if (formatted.length >= this.mesajlar.length) {
+                                const oncekiUzunluk = this.mesajlar.length;
+                                this.mesajlar = formatted;
+                                if (this.mesajlar.length > oncekiUzunluk && this.sohbetAcik) {
+                                    this.$nextTick(() => this.kaydirAsagi());
+                                } else if (this.mesajlar.length > oncekiUzunluk && !this.sohbetAcik) {
+                                    this.okunmamisSayisi += (this.mesajlar.length - oncekiUzunluk);
+                                }
+                            }
                         }
                     }
                 } catch (e) {
@@ -1848,6 +1852,11 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
 
             temizleSohbet() {
                 if (confirm('Sohbet geçmişinizi sıfırlamak istiyor musunuz?')) {
+                    try {
+                        const allSessions = JSON.parse(localStorage.getItem('x_mock_chat_sessions') || '{}');
+                        delete allSessions[this.sessionId];
+                        localStorage.setItem('x_mock_chat_sessions', JSON.stringify(allSessions));
+                    } catch(e) {}
                     localStorage.removeItem('x_chat_session');
                     this.sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
                     localStorage.setItem('x_chat_session', this.sessionId);
