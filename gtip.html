@@ -1466,12 +1466,20 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
                         <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-blue-500/40 text-blue-100 border border-blue-400/30">AI</span>
                     </div>
                     <div class="text-[11px] text-blue-200 flex items-center gap-1.5 mt-0.5">
-                        <span x-text="oturumDurumu === 'yonetici_devraldi' ? '👤 Gümrük Müşaviri Yetkilisi Yayında' : '● Canlı Mevzuat Danışmanı'"></span>
+                        <span x-text="hasApiKey ? '✨ Gemini AI Canlı Bağlantı' : (oturumDurumu === 'yonetici_devraldi' ? '👤 Gümrük Müşaviri Yetkilisi Yayında' : '● Canlı Mevzuat Danışmanı')"></span>
                     </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-1">
+                <button 
+                    type="button"
+                    @click="apiModalAcik = !apiModalAcik" 
+                    class="p-2 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition text-xs cursor-pointer" 
+                    :class="{'text-amber-300 font-bold': hasApiKey}"
+                    title="Yapay Zeka API Ayarı (Gemini / Yerleşik)">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
                 <button 
                     type="button"
                     @click="temizleSohbet()" 
@@ -1486,6 +1494,38 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
                     title="Kapat">
                     <i class="fa-solid fa-chevron-down text-sm"></i>
                 </button>
+            </div>
+        </div>
+
+        <!-- API AYARLARI ÇEKMECESİ -->
+        <div x-show="apiModalAcik" x-cloak class="p-3.5 bg-slate-900 text-white text-xs border-b border-slate-700 space-y-2 shrink-0">
+            <div class="flex items-center justify-between">
+                <span class="font-bold flex items-center gap-1.5 text-blue-300">
+                    <i class="fa-solid fa-sliders"></i> Müşavir AI Model & API Ayarı
+                </span>
+                <button type="button" @click="apiModalAcik = false" class="text-slate-400 hover:text-white text-xs cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-[11px] text-slate-300 leading-relaxed">
+                Varsayılan olarak <strong>Quantum Akıllı Gümrük Motoru</strong> aktiftir (anahtar gerektirmez). İsterseniz canlı <strong>Google Gemini API</strong> anahtarınızı girerek doğrudan Gemini 1.5 Flash ile konuşturabilirsiniz.
+            </p>
+            <div class="flex gap-1.5">
+                <input 
+                    type="password" 
+                    x-model="apiKeyInput" 
+                    placeholder="Google Gemini API Key (AIzaSy...)" 
+                    class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-mono">
+                <button 
+                    type="button" 
+                    @click="kaydetApiKey()" 
+                    class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs transition cursor-pointer">
+                    Kaydet
+                </button>
+            </div>
+            <div x-show="hasApiKey" class="flex items-center justify-between text-[10px] text-emerald-400 pt-1">
+                <span>✓ Canlı Gemini 1.5 Flash Aktif</span>
+                <button type="button" @click="silApiKey()" class="text-rose-400 hover:underline cursor-pointer">Anahtarı Sıfırla</button>
             </div>
         </div>
 
@@ -1606,6 +1646,9 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
     function aiChatWidget() {
         return {
             sohbetAcik: false,
+            apiModalAcik: false,
+            apiKeyInput: localStorage.getItem('gumruk_ai_api_key') || '',
+            hasApiKey: !!(localStorage.getItem('gumruk_ai_api_key')),
             yaziyor: false,
             girdiMesaj: '',
             mesajlar: [],
@@ -1619,6 +1662,9 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
 
             initWidget() {
                 this.sohbetAcik = false;
+                this.hasApiKey = !!(localStorage.getItem('gumruk_ai_api_key'));
+                this.apiKeyInput = localStorage.getItem('gumruk_ai_api_key') || '';
+
                 // Persistent Session ID
                 let sid = localStorage.getItem('x_chat_session');
                 if (!sid) {
@@ -1660,6 +1706,44 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
                 }, { passive: true });
             },
 
+            formatMarkdown(text) {
+                if (!text) return '';
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 bg-slate-100 text-blue-700 font-mono text-[11px] rounded">$1</code>');
+            },
+
+            kaydetApiKey() {
+                const key = (this.apiKeyInput || '').trim();
+                if (key) {
+                    localStorage.setItem('gumruk_ai_api_key', key);
+                    this.hasApiKey = true;
+                    this.apiModalAcik = false;
+                    this.mesajlar.push({
+                        gonderen: 'ai',
+                        mesaj: '✨ <strong>Google Gemini Canlı API Bağlandı!</strong> Artık sorularınız doğrudan Google Gemini 1.5 Flash ile yanıtlanacaktır.',
+                        zaman: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                    });
+                } else {
+                    this.silApiKey();
+                }
+                this.$nextTick(() => this.kaydirAsagi());
+            },
+
+            silApiKey() {
+                localStorage.removeItem('gumruk_ai_api_key');
+                this.apiKeyInput = '';
+                this.hasApiKey = false;
+                this.apiModalAcik = false;
+                this.mesajlar.push({
+                    gonderen: 'ai',
+                    mesaj: '⚡ <strong>Quantum Akıllı Gümrük Motoru</strong> moduna geçildi. (Harici API gerektirmez)',
+                    zaman: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                });
+                this.$nextTick(() => this.kaydirAsagi());
+            },
+
             sohbetAc() {
                 this.sohbetAcik = true;
                 this.okunmamisSayisi = 0;
@@ -1687,7 +1771,7 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
                         this.mesajlar = (data.mesajlar || []).map(m => ({
                             id: m.id,
                             gonderen: m.gonderen,
-                            mesaj: m.mesaj,
+                            mesaj: this.formatMarkdown(m.mesaj),
                             zaman: m.created_at ? m.created_at.substring(11, 16) : ''
                         }));
 
@@ -1729,20 +1813,21 @@ Detaylı gümrük beyannamesi ve mevzuat danışmanlığı: Quantum AI Gümrük 
 
                     const data = await res.json();
                     if (data && data.success) {
-                        if (data.ai_yanit) {
+                        const reply = data.ai_yanit || data.yanit || data.cevap;
+                        if (reply) {
                             this.mesajlar.push({
                                 gonderen: 'ai',
-                                mesaj: data.ai_yanit,
+                                mesaj: this.formatMarkdown(reply),
                                 zaman: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
                             });
                         } else if (data.bildirim) {
                             this.mesajlar.push({
                                 gonderen: 'yonetici',
-                                mesaj: data.bildirim,
+                                mesaj: this.formatMarkdown(data.bildirim),
                                 zaman: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
                             });
                         }
-                        this.oturumDurumu = data.durum;
+                        this.oturumDurumu = data.durum || 'ai_aktif';
                     }
                 } catch (e) {
                     this.mesajlar.push({
