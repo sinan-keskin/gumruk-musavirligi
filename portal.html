@@ -348,8 +348,10 @@
     <!-- 2. PINNED MAIN VIEWPORT (CANVAS + OVERLAYS - ASLA KAYBOLMAZ / SABİTTİR)     -->
     <!-- ========================================================================= -->
     <div id="xg-portal-pinned-wrapper">
+        <!-- Anında 0ms ilk görsel boyaması (Canvas yüklenene kadar boşluğu önler) -->
+        <img id="xg-portal-fallback-bg" src="./uploads/portal_frames/frame_001.webp" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none" alt="Portal Background">
         <!-- 376 Kare Çizen Yüksek Performanslı HTML5 Canvas -->
-        <canvas id="xg-portal-canvas"></canvas>
+        <canvas id="xg-portal-canvas" class="relative z-1"></canvas>
 
         <!-- 5 Aşamalı Cam Efektli İçerik Panelleri -->
         <div id="xg-portal-scenes-overlay">
@@ -1815,35 +1817,114 @@
                 ctx.drawImage(img, 0, 0, iw, ih, nx, ny, nw, nh);
             }
 
-            // Frame Yükleyici
-            function loadFrame(idx, onComplete) {
-                if (frames[idx]) {
-                    if (onComplete && frames[idx].complete) onComplete(frames[idx]);
-                    return frames[idx];
-                }
+            // Yüksek Performanslı Priority Queue ve Eşzamanlı Yükleme Havuzu
+            const MAX_CONCURRENT = 6;
+            let activeRequests = 0;
+            const requestQueue = [];
+            const queuedSet = new Set();
+            const frameCallbacks = {};
 
-                const img = new Image();
-                img.src = getFrameUrl(idx);
-                img.onload = function() {
-                    frames[idx] = img;
-                    loadedCount++;
-                    if (onComplete) onComplete(img);
-                };
-                img.onerror = function() {
-                    // Yükleme hatası durumunda sessizce geç
-                };
-                frames[idx] = img;
-                return img;
+            function fireFrameCallbacks(idx, img) {
+                if (frameCallbacks[idx]) {
+                    while (frameCallbacks[idx].length > 0) {
+                        const cb = frameCallbacks[idx].shift();
+                        try { cb(img); } catch(e) {}
+                    }
+                    delete frameCallbacks[idx];
+                }
             }
 
-            // Frame Render (Fallback garantili)
+            function processQueue() {
+                while (activeRequests < MAX_CONCURRENT && requestQueue.length > 0) {
+                    const idx = requestQueue.shift();
+                    queuedSet.delete(idx);
+
+                    if (frames[idx] && frames[idx].complete && frames[idx].naturalWidth > 0) {
+                        fireFrameCallbacks(idx, frames[idx]);
+                        continue;
+                    }
+
+                    activeRequests++;
+                    const img = new Image();
+                    img.onload = function() {
+                        frames[idx] = img;
+                        loadedCount++;
+                        activeRequests--;
+                        fireFrameCallbacks(idx, img);
+                        processQueue();
+                    };
+                    img.onerror = function() {
+                        activeRequests--;
+                        processQueue();
+                    };
+                    img.src = getFrameUrl(idx);
+                    frames[idx] = img;
+                }
+            }
+
+            function queueFrame(idx, isPriority = false, onComplete = null) {
+                if (idx < 1 || idx > TOTAL_FRAMES) return;
+                
+                if (onComplete) {
+                    if (frames[idx] && frames[idx].complete && frames[idx].naturalWidth > 0) {
+                        onComplete(frames[idx]);
+                        return;
+                    }
+                    if (!frameCallbacks[idx]) frameCallbacks[idx] = [];
+                    frameCallbacks[idx].push(onComplete);
+                }
+
+                if (frames[idx] && frames[idx].complete && frames[idx].naturalWidth > 0) {
+                    return;
+                }
+
+                if (queuedSet.has(idx)) {
+                    if (isPriority) {
+                        const qIdx = requestQueue.indexOf(idx);
+                        if (qIdx > -1) {
+                            requestQueue.splice(qIdx, 1);
+                            requestQueue.unshift(idx);
+                        }
+                    }
+                } else {
+                    queuedSet.add(idx);
+                    if (isPriority) {
+                        requestQueue.unshift(idx);
+                    } else {
+                        requestQueue.push(idx);
+                    }
+                }
+
+                processQueue();
+            }
+
+            // Geriye dönük uyumluluk için loadFrame
+            function loadFrame(idx, onComplete) {
+                queueFrame(idx, false, onComplete);
+                return frames[idx];
+            }
+
+            // Frame Render (Talep Üzerine Öncelikli Yükleme + Keyframe Fallback Garantisi)
             function renderFrame(frameIndex) {
                 frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(frameIndex)));
+
+                // İstenen kare henüz inmemişse derhal EN YÜKSEK ÖNCELİKLE kuyruğa al
+                if (!frames[frameIndex] || !frames[frameIndex].complete || frames[frameIndex].naturalWidth === 0) {
+                    queueFrame(frameIndex, true, function(img) {
+                        if (Math.abs(lastRenderedFrame - frameIndex) <= 2) {
+                            drawCover(img);
+                        }
+                    });
+                    if (frameIndex + 1 <= TOTAL_FRAMES) queueFrame(frameIndex + 1, true);
+                    if (frameIndex + 2 <= TOTAL_FRAMES) queueFrame(frameIndex + 2, true);
+                    if (frameIndex - 1 >= 1) queueFrame(frameIndex - 1, true);
+                }
+
                 let imgToDraw = frames[frameIndex];
 
                 if (!imgToDraw || !imgToDraw.complete || imgToDraw.naturalWidth === 0) {
-                    // Hızlı kaydırmada en yakın yüklü kareyi bul
-                    for (let delta = 1; delta <= 30; delta++) {
+                    // Hızlı kaydırmada en yakın yüklü iskelet kareyi bul
+                    for (let delta = 1; delta <= TOTAL_FRAMES; delta++) {
                         const prev = frameIndex - delta;
                         if (prev >= 1 && frames[prev] && frames[prev].complete && frames[prev].naturalWidth > 0) {
                             imgToDraw = frames[prev];
@@ -1863,21 +1944,28 @@
                 }
             }
 
-            // Progressive Preload: 46..376 arasını sırayla belleğe al
+            // Progressive Preload: Kalan tüm ara kareleri boş zamanlarda (idle) arka planda belleğe al
             function startBackgroundPreload() {
-                let current = INITIAL_BATCH + 1;
-                function loadNext() {
+                let current = 1;
+                function scheduleIdleChunk() {
                     if (current > TOTAL_FRAMES) return;
-                    loadFrame(current, function() {
-                        current++;
-                        if ('requestIdleCallback' in window) {
-                            requestIdleCallback(loadNext, { timeout: 80 });
-                        } else {
-                            setTimeout(loadNext, 16);
+                    let count = 0;
+                    while (current <= TOTAL_FRAMES && count < 8) {
+                        if (!frames[current]) {
+                            queueFrame(current, false);
+                            count++;
                         }
-                    });
+                        current++;
+                    }
+                    if (current <= TOTAL_FRAMES) {
+                        if ('requestIdleCallback' in window) {
+                            requestIdleCallback(scheduleIdleChunk, { timeout: 150 });
+                        } else {
+                            setTimeout(scheduleIdleChunk, 30);
+                        }
+                    }
                 }
-                loadNext();
+                scheduleIdleChunk();
             }
 
             // 5 Aşamalı Kesin Portal Sahne Zamanlamaları
@@ -2010,25 +2098,31 @@
                 resizeCanvas();
                 window.addEventListener('resize', resizeCanvas);
 
-                // Frame 1'i derhal yükle ve sahneyi aç
-                loadFrame(1, function() {
+                // 1. Frame 1'i derhal en yüksek öncelikle çek ve sahneyi aç
+                queueFrame(1, true, function() {
                     renderFrame(1);
                     const loader = document.getElementById('xg-portal-loader');
                     if (loader) loader.classList.add('xg-portal-loaded');
                 });
 
-                // 2..45 karelerini eşzamanlı yükle
-                for (let i = 2; i <= INITIAL_BATCH; i++) {
-                    loadFrame(i);
+                // 2. 376. son kareyi önceden kuyruğa al
+                queueFrame(TOTAL_FRAMES, false);
+
+                // 3. İlk sahnede (2..12) akıcı geçiş için öncelikli yükle
+                for (let i = 2; i <= 12; i++) {
+                    queueFrame(i, true);
                 }
 
-                // 376. son kareyi de önceden yükle
-                loadFrame(TOTAL_FRAMES);
+                // 4. İskelet Ağı (Keyframe Subsampling): Her 10. kareyi (10, 20, 30... 370) kuyruğa al
+                // Toplam sadece 37 kare (~2MB), 1-2 saniyede tüm portalın arka planı hazır olur!
+                for (let k = 10; k < TOTAL_FRAMES; k += 10) {
+                    queueFrame(k, false);
+                }
 
                 // ScrollTrigger başlat
                 initScrollTrigger();
 
-                // Arka plan yüklemesini başlat
+                // 5. Kalan tüm ara kareleri arka planda boş zamanlarda (idle) doldur
                 startBackgroundPreload();
             }
 

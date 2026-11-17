@@ -367,8 +367,10 @@
     <!-- 2. PINNED MAIN VIEWPORT (CANVAS + OVERLAYS - ASLA KAYBOLMAZ / SABİTTİR)     -->
     <!-- ========================================================================= -->
     <div id="tg-pinned-wrapper">
+        <!-- Anında 0ms Arka Plan Fallback (HTML İlk Boyama) -->
+        <img id="tg-fallback-bg" src="./uploads/ana_akis_frames/frame_001.webp" class="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none" alt="Gümrük Müşavirliği">
         <!-- 640 Kare Çizen Yüksek Performanslı HTML5 Canvas -->
-        <canvas id="tg-canvas"></canvas>
+        <canvas id="tg-canvas" class="relative z-1"></canvas>
 
         <!-- 7 Aşamalı Cam Efektli (Backdrop Blur) İçerik Panelleri -->
         <div id="tg-scenes-overlay">
@@ -2184,35 +2186,115 @@
                 ctx.drawImage(img, 0, 0, iw, ih, nx, ny, nw, nh);
             }
 
-            // Frame Yükleyici
-            function loadFrame(idx, onComplete) {
-                if (frames[idx]) {
-                    if (onComplete && frames[idx].complete) onComplete(frames[idx]);
-                    return frames[idx];
-                }
+            // Yüksek Performanslı Priority Queue ve Eşzamanlı Yükleme Havuzu
+            const MAX_CONCURRENT = 6;
+            let activeRequests = 0;
+            const requestQueue = [];
+            const queuedSet = new Set();
+            const frameCallbacks = {};
 
-                const img = new Image();
-                img.src = getFrameUrl(idx);
-                img.onload = function() {
-                    frames[idx] = img;
-                    loadedCount++;
-                    if (onComplete) onComplete(img);
-                };
-                img.onerror = function() {
-                    // Yükleme hatası durumunda sessizce geç
-                };
-                frames[idx] = img;
-                return img;
+            function fireFrameCallbacks(idx, img) {
+                if (frameCallbacks[idx]) {
+                    while (frameCallbacks[idx].length > 0) {
+                        const cb = frameCallbacks[idx].shift();
+                        try { cb(img); } catch(e) {}
+                    }
+                    delete frameCallbacks[idx];
+                }
             }
 
-            // Frame Render (Yakındaki en yakın kare fallback garantisi)
+            function processQueue() {
+                while (activeRequests < MAX_CONCURRENT && requestQueue.length > 0) {
+                    const idx = requestQueue.shift();
+                    queuedSet.delete(idx);
+
+                    if (frames[idx] && frames[idx].complete && frames[idx].naturalWidth > 0) {
+                        fireFrameCallbacks(idx, frames[idx]);
+                        continue;
+                    }
+
+                    activeRequests++;
+                    const img = new Image();
+                    img.onload = function() {
+                        frames[idx] = img;
+                        loadedCount++;
+                        activeRequests--;
+                        fireFrameCallbacks(idx, img);
+                        processQueue();
+                    };
+                    img.onerror = function() {
+                        activeRequests--;
+                        processQueue();
+                    };
+                    img.src = getFrameUrl(idx);
+                    frames[idx] = img;
+                }
+            }
+
+            function queueFrame(idx, isPriority = false, onComplete = null) {
+                if (idx < 1 || idx > TOTAL_FRAMES) return;
+                
+                if (onComplete) {
+                    if (frames[idx] && frames[idx].complete && frames[idx].naturalWidth > 0) {
+                        onComplete(frames[idx]);
+                        return;
+                    }
+                    if (!frameCallbacks[idx]) frameCallbacks[idx] = [];
+                    frameCallbacks[idx].push(onComplete);
+                }
+
+                if (frames[idx] && frames[idx].complete && frames[idx].naturalWidth > 0) {
+                    return;
+                }
+
+                if (queuedSet.has(idx)) {
+                    if (isPriority) {
+                        const qIdx = requestQueue.indexOf(idx);
+                        if (qIdx > -1) {
+                            requestQueue.splice(qIdx, 1);
+                            requestQueue.unshift(idx);
+                        }
+                    }
+                } else {
+                    queuedSet.add(idx);
+                    if (isPriority) {
+                        requestQueue.unshift(idx);
+                    } else {
+                        requestQueue.push(idx);
+                    }
+                }
+
+                processQueue();
+            }
+
+            // Geriye dönük uyumluluk için loadFrame
+            function loadFrame(idx, onComplete) {
+                queueFrame(idx, false, onComplete);
+                return frames[idx];
+            }
+
+            // Frame Render (Talep Üzerine Öncelikli Yükleme + Keyframe Fallback Garantisi)
             function renderFrame(frameIndex) {
                 frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(frameIndex)));
+
+                // İstenen kare henüz inmemişse derhal EN YÜKSEK ÖNCELİKLE kuyruğa al
+                if (!frames[frameIndex] || !frames[frameIndex].complete || frames[frameIndex].naturalWidth === 0) {
+                    queueFrame(frameIndex, true, function(img) {
+                        if (Math.abs(lastRenderedFrame - frameIndex) <= 2) {
+                            drawCover(img);
+                        }
+                    });
+                    // Bitişik kareleri de öncelikli iste
+                    if (frameIndex + 1 <= TOTAL_FRAMES) queueFrame(frameIndex + 1, true);
+                    if (frameIndex + 2 <= TOTAL_FRAMES) queueFrame(frameIndex + 2, true);
+                    if (frameIndex - 1 >= 1) queueFrame(frameIndex - 1, true);
+                }
+
                 let imgToDraw = frames[frameIndex];
 
                 if (!imgToDraw || !imgToDraw.complete || imgToDraw.naturalWidth === 0) {
-                    // Kullanıcı hızlı kaydırdıysa en yakın yüklü kareyi bul
-                    for (let delta = 1; delta <= 35; delta++) {
+                    // Kullanıcı hızlı kaydırdıysa en yakın yüklü iskelet kareyi bul
+                    for (let delta = 1; delta <= TOTAL_FRAMES; delta++) {
                         const prev = frameIndex - delta;
                         if (prev >= 1 && frames[prev] && frames[prev].complete && frames[prev].naturalWidth > 0) {
                             imgToDraw = frames[prev];
@@ -2232,21 +2314,28 @@
                 }
             }
 
-            // Progressive Preload: 61..640 arasını tarayıcıyı yormadan sırayla belleğe al
+            // Progressive Preload: Kalan tüm ara kareleri boş zamanlarda (idle) arka planda belleğe al
             function startBackgroundPreload() {
-                let current = INITIAL_BATCH + 1;
-                function loadNext() {
+                let current = 1;
+                function scheduleIdleChunk() {
                     if (current > TOTAL_FRAMES) return;
-                    loadFrame(current, function() {
-                        current++;
-                        if ('requestIdleCallback' in window) {
-                            requestIdleCallback(loadNext, { timeout: 80 });
-                        } else {
-                            setTimeout(loadNext, 16);
+                    let count = 0;
+                    while (current <= TOTAL_FRAMES && count < 10) {
+                        if (!frames[current]) {
+                            queueFrame(current, false);
+                            count++;
                         }
-                    });
+                        current++;
+                    }
+                    if (current <= TOTAL_FRAMES) {
+                        if ('requestIdleCallback' in window) {
+                            requestIdleCallback(scheduleIdleChunk, { timeout: 150 });
+                        } else {
+                            setTimeout(scheduleIdleChunk, 30);
+                        }
+                    }
                 }
-                loadNext();
+                scheduleIdleChunk();
             }
 
             // 7 Aşamalı Kesin Kare Zamanlamaları
@@ -2378,30 +2467,31 @@
                 resizeCanvas();
                 window.addEventListener('resize', resizeCanvas);
 
-                // İlk 60 kareyi önceden yükle
-                let initialLoadedFrames = 0;
-
-                // Frame 1'i derhal yükle ve sahneyi aç
-                loadFrame(1, function(firstImg) {
+                // 1. Frame 1'i derhal en yüksek öncelikle çek ve sahneyi aç
+                queueFrame(1, true, function(firstImg) {
                     renderFrame(1);
                     const loader = document.getElementById('tg-initial-loader');
                     if (loader) loader.classList.add('tg-loaded');
                 });
 
-                // 2..60 karelerini eşzamanlı yükle
-                for (let i = 2; i <= INITIAL_BATCH; i++) {
-                    loadFrame(i, function() {
-                        initialLoadedFrames++;
-                    });
+                // 2. 640. son kareyi de önceden kuyruğa al
+                queueFrame(TOTAL_FRAMES, false);
+
+                // 3. İlk sahnede (2..15) anında akıcı geçiş için ilk kareleri öncelikli çek
+                for (let i = 2; i <= 15; i++) {
+                    queueFrame(i, true);
                 }
 
-                // 640. son kareyi de önceden yükle ki en sona sarıldığında anında hazır olsun
-                loadFrame(TOTAL_FRAMES);
+                // 4. İskelet Ağı (Keyframe Subsampling): Her 10. kareyi (10, 20, 30... 640) kuyruğa ekle
+                // Toplam sadece 64 kare (~3.5MB), 1-2 saniyede tüm sayfanın ana iskeleti hazır olur!
+                for (let k = 10; k < TOTAL_FRAMES; k += 10) {
+                    queueFrame(k, false);
+                }
 
                 // ScrollTrigger'ı kur
                 initScrollTrigger();
 
-                // 61..640 arası kareleri arka planda yükle
+                // 5. Kalan tüm ara kareleri arka planda boş zamanlarda (idle) doldur
                 startBackgroundPreload();
 
                 // Simülatör ilk değerlerini hesapla
