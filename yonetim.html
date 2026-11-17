@@ -98,7 +98,7 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <a :href="logoutUrl" class="p-2 text-red-600 hover:text-red-800 rounded-lg bg-red-50 hover:bg-red-100 transition border border-red-200 text-xs" title="Çıkış Yap">
+            <a href="javascript:void(0)" onclick="window.gumrukApi && window.gumrukApi.logout ? window.gumrukApi.logout() : location.href='giris.html'" class="p-2 text-red-600 hover:text-red-800 rounded-lg bg-red-50 hover:bg-red-100 transition border border-red-200 text-xs" title="Çıkış Yap">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </a>
             <button @click="yenileAktifTab()" class="p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition border border-slate-200 text-xs">
@@ -251,7 +251,7 @@
                 <a :href="portalUrl" target="_blank" class="flex-1 text-center py-2 px-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-xs text-slate-700 transition font-bold shadow-sm">
                     Müşteri Portalı &rarr;
                 </a>
-                <a :href="logoutUrl" class="p-2 rounded-xl bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 text-xs transition" title="Çıkış Yap">
+                <a href="javascript:void(0)" onclick="window.gumrukApi && window.gumrukApi.logout ? window.gumrukApi.logout() : location.href='giris.html'" class="p-2 rounded-xl bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 text-xs transition" title="Çıkış Yap">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </a>
             </div>
@@ -277,7 +277,7 @@
                     title="Verileri Yenile">
                     <i class="fa-solid fa-arrows-rotate" :class="{'fa-spin': yukleniyor}"></i>
                 </button>
-                <a :href="logoutUrl" class="px-3.5 py-1.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition flex items-center gap-1.5 border border-red-200 shadow-sm" title="Güvenli Çıkış">
+                <a href="javascript:void(0)" onclick="window.gumrukApi && window.gumrukApi.logout ? window.gumrukApi.logout() : location.href='giris.html'" class="px-3.5 py-1.5 rounded-xl bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition flex items-center gap-1.5 border border-red-200 shadow-sm" title="Güvenli Çıkış">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                     <span>Çıkış Yap</span>
                 </a>
